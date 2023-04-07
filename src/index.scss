@@ -6,7 +6,7 @@
 }
 
 .map-container {
-  height: 400px;
+  height: 100vh;
 }
 
 .sidebar {
@@ -20,4 +20,11 @@
   left: 0;
   margin: 12px;
   border-radius: 4px;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "mapbox-gl/dist/mapbox-gl.css";
+import "mapbox-gl/dist/mapbox-gl.css"; // Mapbox GL JS to render a map, 
 import "./index.scss";
 import App from "./App";
 
