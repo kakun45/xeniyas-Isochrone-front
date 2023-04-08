@@ -2,4 +2,10 @@
   position: absolute;
   z-index: 2;
   background-color: aliceblue;
+  border-radius: 10px;
+  padding-left: 1rem;
+}
+
+.style-entry:hover {
+  background-color: #d2d6d6;
 }

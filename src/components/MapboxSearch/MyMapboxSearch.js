@@ -27,18 +27,18 @@ function MyMapboxSearch({ map, setCenter }) {
 
   const handleClick = (e, index) => {
     // todo: setLatLng in boundary of NYC only: for loop and don't display other lngLat:
-    // - import file nycBoundaries.json,
+    // - import file nycBoundaries.json, (it's in /data in server side)
     // - check if the suddestion is within,
     // - show it into a dropdown
+    // or look into how to send requests with the bounderies attached
     console.log(results, index, results[index], results[index].center, map);
     setCenter(results[index].center); // [-84.383662, 33.781374]
-
-    // clear the input field is happening inside the onClick event
   };
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
+        {/* <div className="prose"> */}
         <div className="relative">
           <div className="absolute flex flex--center-cross flex--center-main w36 h36">
             <svg className="icon">
@@ -47,9 +47,10 @@ function MyMapboxSearch({ map, setCenter }) {
           </div>
           <input
             onClick={(e) => {
+              // clear the input field
+              // e.target.value = ""; // Don't use. need to click 2ce to clear
               setQuery("");
               setShowStyleListState(true);
-              // e.target.value = ""; // Don't use. need to click 2ce to clear
             }}
             className="input pl36"
             type="text"
@@ -58,23 +59,24 @@ function MyMapboxSearch({ map, setCenter }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
-
         {/* <input type="submit" value="Search" /> */}
       </form>
 
       {showStyleListState ? (
         <div className="style-list">
           {results.map((result, index) => (
-            <div
-              key={result.id}
-              onClick={(e) => {
-                handleClick(e, index);
-                setShowStyleListState(false);
-                e.target.value = "";
-              }}>
-              <h3>{result.text}</h3>
-              <p>{result.place_name}</p>
-              <hr />
+            <div className="style-entry">
+              <div
+                key={result.id}
+                onClick={(e) => {
+                  handleClick(e, index);
+                  setShowStyleListState(false);
+                  e.target.value = "";
+                }}>
+                <h3>{result.text}</h3>
+                <p>{result.place_name}</p>
+                <hr />
+              </div>
             </div>
           ))}
         </div>

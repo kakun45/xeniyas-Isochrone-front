@@ -1,15 +1,15 @@
-// import MapGL from "react-map-gl";
 // import Geocoder from "react-map-gl-geocoder"; // depricated
-// import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-// import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder"; // depricated search on it
+// import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder"; // the search might be depricated on it
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { SearchBox } from "@mapbox/search-js-react";
+import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 //import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import MyMapboxSearch from "../MapboxSearch/MyMapboxSearch";
+import NavBar from "../NavBar/NavBar";
 import "./Isochrone.scss";
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_PUBLIC_TOKEN;
+const API_URL = process.env.REACT_APP_SERVER_URL;
 
 function Isochrone() {
   const mapContainer = useRef(null);
@@ -20,29 +20,13 @@ function Isochrone() {
   const [lat, setLat] = useState(40.748424);
   const [zoom, setZoom] = useState(11);
 
-  const [value, setValue] = React.useState("");
-
-  // Create constants to use in getIso()
-  const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
-
-  // For geocoding: text -> to get "coordinates": [lat, lng]
-  // const dataset = "mapbox.places";
-  // const search_text = ???;
-  // const urlBaseSearch = `https://api.mapbox.com/geocoding/v5/${dataset}/${search_text}.json?access_token=${mapboxgl.accessToken}`;
-  // const autofill = new MapboxAutofill({
-  //   accessToken: mapboxgl.accessToken,
-  // });
-  // const sessionToken = new SessionToken();
-  // console.log(sessionToken.id); // = I am a UUIDv4 value!
-  // async const result = await search.autofill('Washington D.C.', { sessionToken });
-  // if (result.suggestions.length === 0) return;
-  //   const suggestion = result.suggestions[0];
-  //   const { features } = await autofill.retrieve(suggestion, { sessionToken });
-  // doSomethingWithCoordinates(features);
+  // const [value, setValue] = React.useState("");
 
   const [profile, setProfile] = useState("walking"); // Set the default routing profile
-  const [minutes, setMinutes] = useState(10); // Set the default duration
+  const [minutes, setMinutes] = useState("10"); // Set the default duration
   const [center, setCenter] = useState([lng, lat]);
+  const [inputValue, setInputValue] = useState("");
+  const [buttonPressed, setButtonPressed] = useState(0);
 
   const marker = new mapboxgl.Marker({
     color: "#314ccd",
@@ -57,13 +41,13 @@ function Isochrone() {
 
   // move the map when the center property changes
   useEffect(() => {
-    // if (map === null) return; // obj with map imside {current: Map}
     if (map.current === null) return;
     // flyTo  a selec tion from a dropdown
     map.current.flyTo({ center: center, zoom: 14 });
     console.log(center); // center: [lng, lat]
     // set a new marker on the new center
     marker.setLngLat(center).addTo(map.current);
+    // todo: remove all markers on selection of a new address
   }, [center]);
 
   useEffect(() => {
@@ -93,12 +77,12 @@ function Isochrone() {
     }
     if (event.target.name === "duration") {
       setMinutes(event.target.value);
-      // console.log(
-      //   "Change in minutes:",
-      //   "event.target.value=",
-      //   event.target.value,
-      //   typeof event.target.value
-      // );
+      console.log(
+        "Change in minutes:",
+        "event.target.value=",
+        event.target.value,
+        typeof event.target.value
+      );
     }
   };
 
@@ -106,6 +90,9 @@ function Isochrone() {
   // https://api.mapbox.com/isochrone/v1/mapbox/walking/73.985664,40.748424.json?contours_minutes=10&access_token=pk.eyJ1IjoieHMyMyIsImEiOiJjbGZ4ZmF5MmkwMG16M2V0YXBoaGx1dGN2In0.NgK6FAZDmr2IQK054aKoyA
 
   // map.current.setCenter([-73.985664, 40.748424]); // not working
+
+  // Create constants to use in getIso()
+  const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
 
   useEffect(() => {
     // Create a function that sets up the Isochrone API query then makes an fetch call
@@ -166,7 +153,36 @@ function Isochrone() {
     });
   }, []);
 
-  // const handleGeocoderViewportChange = () => {};
+  useEffect(() => {
+    // let myInputValue = inputValue;
+    // let myCenter = center;
+    if (buttonPressed === 0) return;
+    console.log(buttonPressed);
+    console.log("i am a happy little button that was pressed.  minutes is:");
+    console.log(inputValue);
+    console.log(`call backend with ${center} and ${inputValue}`);
+    const params = { center, inputValue };
+    console.log(params);
+    // API call goes here
+    axios
+      .post(`${API_URL}/api/v1/destinations/commute`, params)
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err));
+  }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
+
+  const handleGo = (e) => {
+    e.preventDefault();
+    // validate that it's not empty ''
+    if (inputValue) {
+      setButtonPressed(Date.now()); // only when clicked and Not empty do I grab an inputValue
+    }
+  };
+
+  // watch over the change on center and reset lng, lat
+  useEffect(() => {
+    setLng(center[0]);
+    setLat(center[1]);
+  }, [center]);
 
   // useEffect(() => {
   // const Geocoder = new MapboxGeocoder({
@@ -179,15 +195,7 @@ function Isochrone() {
 
   return (
     <div>
-      {/* <form>
-        <AddressAutofill accessToken={mapboxgl.accessToken}>
-          <input
-            autoComplete="Enter origin address"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-        </AddressAutofill>
-      </form> */}
+      <NavBar />
       <MyMapboxSearch map={map.current} setCenter={setCenter} />
       {/* {map.current ? (
         <MapboxGeocoder
@@ -291,6 +299,19 @@ function Isochrone() {
             </label>
           </div>
           <h4 className="txt-m txt-bold mb6">Customize:</h4>
+          <div className="style-input">
+            <input
+              className="input border-r--0 round-l round"
+              placeholder="Daily travel limit (min)"
+              name="duration"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              // onChange={handleChange} // works, but sends a request on every key stroke, DONT use it
+            />
+            <button className="btn px24 round-r" onClick={handleGo}>
+              Go
+            </button>
+          </div>
         </form>
       </div>
       <div ref={mapContainer} className="map-container" />
