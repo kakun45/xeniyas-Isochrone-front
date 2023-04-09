@@ -20,7 +20,7 @@ function Isochrone() {
   const [lat, setLat] = useState(40.748424);
   const [zoom, setZoom] = useState(11);
 
-  // const [value, setValue] = React.useState("");
+  const [geometry, setGeometry] = useState(null);
 
   const [profile, setProfile] = useState("walking"); // Set the default routing profile
   const [minutes, setMinutes] = useState("10"); // Set the default duration
@@ -39,15 +39,15 @@ function Isochrone() {
     lat: lat,
   };
 
-  // move the map when the center property changes
+  // move/fly the map when the center property changes
   useEffect(() => {
+    // todo: remove all markers on selection of a new address:
+    //  marker.remove(); // https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker#remove
     if (map.current === null) return;
     // flyTo  a selec tion from a dropdown
-    map.current.flyTo({ center: center, zoom: 14 });
-    console.log(center); // center: [lng, lat]
+    map.current.flyTo({ center: center, zoom: 14 }); // center: [lng, lat]
     // set a new marker on the new center
     marker.setLngLat(center).addTo(map.current);
-    // todo: remove all markers on selection of a new address
   }, [center]);
 
   useEffect(() => {
@@ -77,12 +77,12 @@ function Isochrone() {
     }
     if (event.target.name === "duration") {
       setMinutes(event.target.value);
-      console.log(
-        "Change in minutes:",
-        "event.target.value=",
-        event.target.value,
-        typeof event.target.value
-      );
+      // console.log(
+      //   "Change in minutes:",
+      //   "event.target.value=",
+      //   event.target.value,
+      //   typeof event.target.value
+      // );
     }
   };
 
@@ -94,20 +94,25 @@ function Isochrone() {
   // Create constants to use in getIso()
   const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
 
+  // useEffect(() => {
+  //   // Create a function that sets up the Isochrone API query then makes an fetch call
+  //   async function getIso() {
+  //     const query = await fetch(
+  //       `${urlBase}${profile}/${lng},${lat}?contours_minutes=${minutes}&polygons=true&access_token=${mapboxgl.accessToken}`,
+  //       { method: "GET" }
+  //     );
+  //     const data = await query.json();
+  //     // Set the 'iso' source's data to what's returned by the API query
+  //     console.log(data);
+  //     map.current.getSource("iso")?.setData(data); // ? must be there for no err
+  //   }
+  //   getIso();
+  // }, [lng, lat, minutes, profile]);
+
   useEffect(() => {
-    // Create a function that sets up the Isochrone API query then makes an fetch call
-    async function getIso() {
-      const query = await fetch(
-        `${urlBase}${profile}/${lng},${lat}?contours_minutes=${minutes}&polygons=true&access_token=${mapboxgl.accessToken}`,
-        { method: "GET" }
-      );
-      const data = await query.json();
-      // Set the 'iso' source's data to what's returned by the API query
-      console.log(data);
-      map.current.getSource("iso")?.setData(data); // ? must be there for no err
-    }
-    getIso();
-  }, [lng, lat, minutes, profile]);
+    console.log("setting geometry to map");
+    map.current.getSource("iso")?.setData(geometry);
+  }, [geometry]);
 
   // Since layers in Mapbox GL JS are remote, they are asynchronous. So code that connects to Mapbox GL JS often uses event binding to change the map at the right time. For example:
   useEffect(() => {
@@ -154,19 +159,17 @@ function Isochrone() {
   }, []);
 
   useEffect(() => {
-    // let myInputValue = inputValue;
-    // let myCenter = center;
     if (buttonPressed === 0) return;
-    console.log(buttonPressed);
-    console.log("i am a happy little button that was pressed.  minutes is:");
-    console.log(inputValue);
-    console.log(`call backend with ${center} and ${inputValue}`);
+    // console.log(buttonPressed);
+    // console.log("i am a happy little button that was pressed.  minutes is:");
+    // console.log(`call backend with ${center} and ${inputValue}`);
     const params = { center, inputValue };
-    console.log(params);
+    // console.log(params);
     // API call goes here
     axios
-      .post(`${API_URL}/api/v1/destinations/commute`, params)
-      .then((res) => console.log(res))
+      // .post(`${API_URL}/api/v1/destinations/commute`, params)
+      .post(`${API_URL}/api/v1/destinations/commute-all`, params)
+      .then((res) => setGeometry(res.data))
       .catch((err) => console.error(err));
   }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
 
@@ -177,12 +180,6 @@ function Isochrone() {
       setButtonPressed(Date.now()); // only when clicked and Not empty do I grab an inputValue
     }
   };
-
-  // watch over the change on center and reset lng, lat
-  useEffect(() => {
-    setLng(center[0]);
-    setLat(center[1]);
-  }, [center]);
 
   // useEffect(() => {
   // const Geocoder = new MapboxGeocoder({

@@ -8,16 +8,16 @@ function MyMapboxSearch({ map, setCenter }) {
   const [results, setResults] = useState([]);
   const [showStyleListState, setShowStyleListState] = useState(true);
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${mapboxgl.accessToken}`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => setResults(data.features));
-  }
+  // function handleSubmit(event) {
+  //   event.preventDefault();
+  //   const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?language=en&limit=3&country=US&access_token=${mapboxgl.accessToken}`;
+  //   fetch(url)
+  //     .then((response) => response.json())
+  //     .then((data) => setResults(data.features));
+  // }
 
   useEffect(() => {
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${mapboxgl.accessToken}`;
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?language=en&limit=3&country=US&access_token=${mapboxgl.accessToken}`;
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
@@ -37,7 +37,8 @@ function MyMapboxSearch({ map, setCenter }) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form>
+        {/*<form onSubmit={handleSubmit}> */}
         {/* <div className="prose"> */}
         <div className="relative">
           <div className="absolute flex flex--center-cross flex--center-main w36 h36">
