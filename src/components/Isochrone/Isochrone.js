@@ -16,21 +16,28 @@ function Isochrone() {
   const map = useRef(null); // it's a mapRef	Object -> Ref for react-map-gl map component.
 
   // this is a viewport params:
-  const [lng, setLng] = useState(-73.985664);
-  const [lat, setLat] = useState(40.748424);
-  const [zoom, setZoom] = useState(11);
+  const [lng] = useState(-73.985664);
+  const [lat] = useState(40.748424);
+  const [zoom] = useState(11);
 
   const [geometry, setGeometry] = useState(null);
 
-  // const [profile, setProfile] = useState("walking"); // Set the default routing profile
-  // const [minutes, setMinutes] = useState("10"); // Set the default duration
+  const [profile] = useState("walking"); // Set the default routing profile
+  const [minutes, setMinutes] = useState("5"); // Set the default duration
   const [center, setCenter] = useState([lng, lat]);
   const [inputValue, setInputValue] = useState("");
   const [buttonPressed, setButtonPressed] = useState(0);
+  const [marker] = useState(
+    new mapboxgl.Marker({
+      color: "#314ccd",
+    })
+  );
 
-  const marker = new mapboxgl.Marker({
-    color: "#314ccd",
-  });
+  // useEffect(() => {
+  //   const marker = new mapboxgl.Marker({
+  //     color: "#314ccd",
+  //   });
+  // }, []);
 
   // Create a LngLat object to use in the marker initialization
   // https://docs.mapbox.com/mapbox-gl-js/api/#lnglat
@@ -41,14 +48,15 @@ function Isochrone() {
 
   // move/fly the map when the center property changes
   useEffect(() => {
-    // todo: remove all markers on selection of a new address:
-    // marker.remove(); // https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker#remove
+    console.log(marker);
+    // remove all markers on selection on a selection of a new address:
+    marker.remove(); // https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker#remove
     if (map.current === null) return;
     // flyTo  a selec tion from a dropdown
     map.current.flyTo({ center: center, zoom: 14 }); // center: [lng, lat]
     // set a new marker on the new center
     marker.setLngLat(center).addTo(map.current);
-  }, [center]);
+  }, [center, marker]);
 
   useEffect(() => {
     if (map.current) return; // initialize map only once on Mount. {current: Map}
@@ -63,23 +71,25 @@ function Isochrone() {
 
     // Initialize the marker at the query coordinates
     marker.setLngLat(lngLat).addTo(map.current);
-  }, []);
+    console.log("line 74");
+  }, [lat, lng, marker, zoom]);
 
   // When a user changes the value of profile or duration by clicking a button, change the parameter's value and make the API query again
-  const handleChange = (event) => {
-    if (event.target.name === "profile") {
-      setProfile(event.target.value);
-    }
-    if (event.target.name === "duration") {
-      setMinutes(event.target.value);
-    }
-  };
+  // works
+  // const handleChange = (event) => {
+  //   // if (event.target.name === "profile") {
+  //   //   setProfile(event.target.value);
+  //   // }
+  //   if (event.target.name === "duration") {
+  //     setMinutes(event.target.value);
+  //   }
+  // };
 
   // works
   // https://api.mapbox.com/isochrone/v1/mapbox/walking/73.985664,40.748424.json?contours_minutes=10&access_token=pk.eyJ1IjoieHMyMyIsImEiOiJjbGZ4ZmF5MmkwMG16M2V0YXBoaGx1dGN2In0.NgK6FAZDmr2IQK054aKoyA
 
   // Create constants to use in getIso()
-  const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
+  // const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
 
   // useEffect(() => {
   //   // Create a function that sets up the Isochrone API query then makes an fetch call
@@ -146,8 +156,10 @@ function Isochrone() {
     });
   }, []);
 
+  //only on a submit from a buttom, use a .trim() to remove spaces, if not clicked or empty, don't send
   useEffect(() => {
     if (buttonPressed === 0) return;
+    if (!inputValue.trim()) return;
     // console.log("i am a happy little button that was pressed.  minutes is:");
     // console.log(`call backend with ${center} and ${inputValue}`);
     const params = { center, inputValue };
@@ -156,7 +168,9 @@ function Isochrone() {
       .post(`${API_URL}/api/v1/destinations/commute-all`, params)
       .then((res) => setGeometry(res.data))
       .catch((err) => console.error(err));
-  }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
+    // console.log("line 168");
+    // can't put inputValue in here without the validation for empty field or spaces!
+  }, [buttonPressed, inputValue]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
 
   const handleGo = (e) => {
     e.preventDefault();
@@ -289,6 +303,7 @@ function Isochrone() {
               name="duration"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
+              onClick={() => setInputValue("")}
               // onChange={handleChange} // works, but sends a request on every key stroke, DONT use it
             />
             <button className="btn px24 round-r" onClick={handleGo}>

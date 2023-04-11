@@ -56,9 +56,8 @@ function MyMapboxSearch({ map, setCenter }) {
       {showStyleListState ? (
         <div className="style-list">
           {results.map((result, index) => (
-            <div className="style-entry">
+            <div key={result.id} className="style-entry">
               <div
-                key={result.id}
                 onClick={(e) => {
                   handleClick(e, index);
                   setShowStyleListState(false);
