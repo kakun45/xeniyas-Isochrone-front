@@ -14,10 +14,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* buttons don't work */}
         <Route path="/map" element={<Isochrone />} />;
-        {/* static page doesn't load */}
-        {/* <Route path="/map2" element={<StaticPage />} />; */}
       </Routes>
     </BrowserRouter>
   );

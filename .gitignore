@@ -9,6 +9,7 @@
 /coverage
 /data 
 /TEST
+/src/components/StaticPage
 
 # production
 /build

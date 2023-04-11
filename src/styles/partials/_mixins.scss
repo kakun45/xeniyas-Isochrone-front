@@ -1,14 +1,15 @@
 @use "./typography.scss";
+@use "./variables" as *;
 
 // Media Queries
 @mixin tablet {
-  @media (min-width: 768px) {
+  @media (min-width: $breakpoint-tablet) {
     @content;
   }
 }
 
 @mixin desktop {
-  @media (min-width: 1280px) {
+  @media (min-width: $breakpoint-desktop) {
     @content;
   }
 }

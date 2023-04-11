@@ -1,70 +1,167 @@
-# Getting Started with Create React App
+# Commute Crafter by Xeniya Shoiko
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Mapping the Best NYC Living Spaces Within Your Commute Time.
 
-## Available Scripts
+[My linkedin](https://www.linkedin.com/in/xeniya-shoiko)
 
-In the project directory, you can run:
+(screenshot?)
 
-### `npm start`
+## Product Description
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Commute Crafter is a nifty tool that visualizes all destinations reachable within a specific time frame in New York City, whether it's by foot or subway. It's perfect for selecting an apartment or job based on its location while still keeping your commuting time in mind.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features and Usage Instructions
 
-### `npm test`
+TODO fill out (e.g. you enter your address, and # of minutes to commute and press go and it shows all the areas you can reach in that time)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## How to install my project in a development environment
 
-### `npm run build`
+- how to get to use in VS Code: open VS Code and navigate to a directory by
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+File -> Open Folder
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- now to install mysql
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+npm i mysql2
+```
 
-### `npm run eject`
+- how to run server
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+npm run dev # or npx nodemon index
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Front End `.env.sample`:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+REACT_APP_SERVER_URL = http://localhost:8080
+REACT_APP_MAPBOX_PUBLIC_TOKEN = <your public key>
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Back End `.env.sample`:
 
-## Learn More
+```
+PORT = 8080
+ACCESS_TOKEN = <your public key>
+DB_USER = <database username>
+DB_PASSWORD = <database password>
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The "migrate" script in a package.json file is a command that uses the Knex.js library to run database migrations. Migrations are a way to manage changes to your database schema over time, allowing you to version your database schema and apply changes in a controlled and repeatable way. All scripts are defined in my `package.json` file, you can easily run common commands and tasks for your Node.js application using the npm run command:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+ npm run migrate # knex migrate:latest
+ npm run migrate:down # knex migrate:down
+ npm run migrate:rollback # knex migrate:rollback
+ npm run seed # knex seed:run
+```
 
-### Code Splitting
+Seed files are used to populate your database with initial data, such as default settings, test data, or user accounts allowing you to quickly set up test data or default settings. To tell the Knex.js library to run database defined in my project seed files:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+npm run seed # knex seed:run
+```
 
-### Analyzing the Bundle Size
+## developer installation instructions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<back>
 
-### Making a Progressive Web App
+1. Get a MapBox API public key at [mapbox](https://account.mapbox.com/)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Set up an `.env` inside the project root file with a `ACCESS_TOKEN` environment variable for both Front and Backend `.env` files
 
-### Advanced Configuration
+1. Navigate to the directory where my React app is located. Install the dependencies listed in my existing `package.json` file for a React app, you can use the `npm install` command.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. Create and select a database in mysql2 with a name `capstone`
 
-### Deployment
+```
+CREATE DATABASE capstone;
+USE capstone;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+5. Save your database user and password into the `.env` of a server side wich will be used in a database configuration file `knexfile.js`
 
-### `npm run build` fails to minify
+## To instal React you have to clone this [frontend repo](https://github.com/kakun45/xeniyas-Isochrone-front)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+npm start  # to start react
+```
+
+To run in a browser:
+
+```
+http://localhost:3000/map
+```
+
+Unexpected result? Hard reload:
+
+```
+cmd + shift + R
+```
+
+The address field takes in a user's input as a typed in text and produses suggestions,
+the calculations will wait for a second piece of input to begin: `max commute time` and a press of a `Go` button
+
+## To install the server side clone a [backend repo](https://github.com/kakun45/xeniyas-Isochrone-back)
+
+```
+npm run dev # starts the Express server and watches with nodemon
+```
+
+<front>
+
+## Tech Stack and (Project Requirements)
+
+(it must have HTML and CSS implemented using React -> is uses HTML/CSS and React)
+
+(My application uses dynamic data -> it uses both a database for Subway data, and the MapBox API)
+
+(We expect you to incorporate a server into your application -> it uses an express server I wrote and the MapBox API)
+
+- React.js (HTML/CSS/SCSS)
+- Mapbox API
+- Express/Node with Axios and Knex libraries
+- mySQL
+- data processing and clean up: Python, Pandas, Google Colaboratory: [link](https://colab.research.google.com/drive/1B1fAf8jqy54z5zkoOT7kwNqiI2hcJ7eo?usp=share_link)
+- Public data [???]
+
+## Express API Reference
+
+(remove if you dont fill this this)
+
+(APIs for instructors to look at go here)
+endpoints for frontend calls:
+
+```
+http://localhost:8080/api/v1/destinations/commute-all
+```
+
+This takes a coordinate and returns setGeometry Promise<...>
+
+- lat is the latitude of ...
+
+## Lessons learned
+
+- how to use React properly - once I start to separeate properly handlers from the code tat reacts to states changes
+- (dijkstra)
+- (more difficult than expected)
+- calculating the dispance between two points is complicated. the Earth is not flat
+- the version of shortest path algoritm is not efficient, but still worked really well (baseline for dijkstra: O(|E| log |V|), which I didn't come close)
+- using custom classes in JavaScript
+
+## Next steps
+
+- account for time spent waiting for trains
+- show accessibility and amenities (hospitals)
+- color code based on types of transport used
+- support cycling busses and ferries
+- toggle express trains on and off
+- sidewalks and intersections would go in there too
+- add caching for mapbox api responses
+- deploying the project to production
+- implementig functionality for placeholders for OAuth
+- pick an open source license
+- to expand to calculate any region

@@ -1,3 +1,20 @@
 @use "./typography.scss";
 
-$font: "TODO";
+// devises' breakpoints
+$breakpoint-mobile: 320px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1280px;
+
+// colortheme
+$primary-black: #323232;
+$primary-blue: #0095ff;
+$primary-silver: #afafaf;
+
+$secondary-darkBlack: #000;
+$secondary-darkBlue: #0065ad;
+$secondary-gray: #e1e1e1;
+
+$error-state: #d22d2d;
+
+$font: "Avenir Next", "Montserrat", "Eau", "Manrope", "Nunito", "Mulish",
+  "Helvetica";

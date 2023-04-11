@@ -22,8 +22,8 @@ function Isochrone() {
 
   const [geometry, setGeometry] = useState(null);
 
-  const [profile, setProfile] = useState("walking"); // Set the default routing profile
-  const [minutes, setMinutes] = useState("10"); // Set the default duration
+  // const [profile, setProfile] = useState("walking"); // Set the default routing profile
+  // const [minutes, setMinutes] = useState("10"); // Set the default duration
   const [center, setCenter] = useState([lng, lat]);
   const [inputValue, setInputValue] = useState("");
   const [buttonPressed, setButtonPressed] = useState(0);
@@ -42,7 +42,7 @@ function Isochrone() {
   // move/fly the map when the center property changes
   useEffect(() => {
     // todo: remove all markers on selection of a new address:
-    //  marker.remove(); // https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker#remove
+    // marker.remove(); // https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker#remove
     if (map.current === null) return;
     // flyTo  a selec tion from a dropdown
     map.current.flyTo({ center: center, zoom: 14 }); // center: [lng, lat]
@@ -69,27 +69,14 @@ function Isochrone() {
   const handleChange = (event) => {
     if (event.target.name === "profile") {
       setProfile(event.target.value);
-      // console.log(
-      //   "Change in profile:",
-      //   "event.target.value=",
-      //   event.target.value
-      // );
     }
     if (event.target.name === "duration") {
       setMinutes(event.target.value);
-      // console.log(
-      //   "Change in minutes:",
-      //   "event.target.value=",
-      //   event.target.value,
-      //   typeof event.target.value
-      // );
     }
   };
 
   // works
   // https://api.mapbox.com/isochrone/v1/mapbox/walking/73.985664,40.748424.json?contours_minutes=10&access_token=pk.eyJ1IjoieHMyMyIsImEiOiJjbGZ4ZmF5MmkwMG16M2V0YXBoaGx1dGN2In0.NgK6FAZDmr2IQK054aKoyA
-
-  // map.current.setCenter([-73.985664, 40.748424]); // not working
 
   // Create constants to use in getIso()
   const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
@@ -111,6 +98,7 @@ function Isochrone() {
 
   useEffect(() => {
     console.log("setting geometry to map");
+    console.log(geometry);
     map.current.getSource("iso")?.setData(geometry);
   }, [geometry]);
 
@@ -160,14 +148,11 @@ function Isochrone() {
 
   useEffect(() => {
     if (buttonPressed === 0) return;
-    // console.log(buttonPressed);
     // console.log("i am a happy little button that was pressed.  minutes is:");
     // console.log(`call backend with ${center} and ${inputValue}`);
     const params = { center, inputValue };
-    // console.log(params);
-    // API call goes here
+    // API backend call goes here
     axios
-      // .post(`${API_URL}/api/v1/destinations/commute`, params)
       .post(`${API_URL}/api/v1/destinations/commute-all`, params)
       .then((res) => setGeometry(res.data))
       .catch((err) => console.error(err));
@@ -181,11 +166,12 @@ function Isochrone() {
     }
   };
 
+  // side +- buttons
   // useEffect(() => {
-  // const Geocoder = new MapboxGeocoder({
-  //   //   accessToken: mapboxgl.accessToken,
-  //   //   mapboxgl: mapboxgl,
-  //   // });
+  //   const Geocoder = new MapboxGeocoder({
+  //     accessToken: mapboxgl.accessToken,
+  //     mapboxgl: mapboxgl,
+  //   });
   //   // // Add the control to the map.
   //   map.current?.addControl(new mapboxgl.NavigationControl());
   // }, []);
@@ -207,10 +193,10 @@ function Isochrone() {
       /> */}
       <div className="absolute fl my24 mx24 py24 px24 bg-gray-faint round">
         <form id="params">
-          <h4 className="txt-m txt-bold mb6">Choose a travel mode:</h4>
+          {/* <h4 className="txt-m txt-bold mb6">A travel mode:</h4>
 
-          <div className="mb12 mr12 toggle-group align-center">
-            <label className="toggle-container">
+          <div className="mb12 mr12 toggle-group align-center"> */}
+          {/* <label className="toggle-container">
               <input
                 name="profile"
                 type="radio"
@@ -221,8 +207,8 @@ function Isochrone() {
               <div className="toggle toggle--active-null toggle--null">
                 Walking
               </div>
-            </label>
-
+            </label> */}
+          {/* 
             <label className="toggle-container">
               <input
                 checked={profile === "cycling"}
@@ -247,12 +233,12 @@ function Isochrone() {
               <div className="toggle toggle--active-null toggle--null">
                 Driving
               </div>
-            </label>
-          </div>
+            </label> 
+          </div>*/}
 
-          <h4 className="txt-m txt-bold mb6">Choose a maximum duration:</h4>
-          <div className="mb12 mr12 toggle-group align-center">
-            <label className="toggle-container">
+          <h4 className="txt-m txt-bold mb6">Choose a maximum commute:</h4>
+          {/* <div className="mb12 mr12 toggle-group align-center"> */}
+          {/* <label className="toggle-container">
               <input
                 checked={minutes === "10"}
                 name="duration"
@@ -264,7 +250,7 @@ function Isochrone() {
                 {/*  need a new def for  activeDistanceClass:
                  className={`toggle toggle--active-null ${
                   minutes === 10 ? "activeDistanceClass" : ""
-                } toggle--null`}> */}
+                } toggle--null`}> 
                 10 min
               </div>
             </label>
@@ -293,9 +279,9 @@ function Isochrone() {
               <div className="toggle toggle--active-null toggle--null">
                 30 min
               </div>
-            </label>
-          </div>
-          <h4 className="txt-m txt-bold mb6">Customize:</h4>
+            </label> */}
+          {/* </div> */}
+          {/* <h4 className="txt-m txt-bold mb6">Customize:</h4> */}
           <div className="style-input">
             <input
               className="input border-r--0 round-l round"
