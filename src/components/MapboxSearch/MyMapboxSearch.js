@@ -23,7 +23,7 @@ function MyMapboxSearch({ map, setCenter }) {
     // - check if the suddestion is within,
     // - show it into a dropdown
     // or look into how to send requests with the bounderies attached
-    console.log(results, index, results[index], results[index].center, map);
+    // console.log(results, index, results[index], results[index].center, map);
     setCenter(results[index].center); // [-84.383662, 33.781374]
   };
 

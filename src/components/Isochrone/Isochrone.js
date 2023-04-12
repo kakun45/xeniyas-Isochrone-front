@@ -33,12 +33,6 @@ function Isochrone() {
     })
   );
 
-  // useEffect(() => {
-  //   const marker = new mapboxgl.Marker({
-  //     color: "#314ccd",
-  //   });
-  // }, []);
-
   // Create a LngLat object to use in the marker initialization
   // https://docs.mapbox.com/mapbox-gl-js/api/#lnglat
   const lngLat = {
@@ -48,7 +42,6 @@ function Isochrone() {
 
   // move/fly the map when the center property changes
   useEffect(() => {
-    console.log(marker);
     // remove all markers on selection on a selection of a new address:
     marker.remove(); // https://docs.mapbox.com/mapbox-gl-js/api/markers/#marker#remove
     if (map.current === null) return;
@@ -71,7 +64,6 @@ function Isochrone() {
 
     // Initialize the marker at the query coordinates
     marker.setLngLat(lngLat).addTo(map.current);
-    console.log("line 74");
   }, [lat, lng, marker, zoom]);
 
   // When a user changes the value of profile or duration by clicking a button, change the parameter's value and make the API query again
@@ -84,9 +76,6 @@ function Isochrone() {
   //     setMinutes(event.target.value);
   //   }
   // };
-
-  // works
-  // https://api.mapbox.com/isochrone/v1/mapbox/walking/73.985664,40.748424.json?contours_minutes=10&access_token=pk.eyJ1IjoieHMyMyIsImEiOiJjbGZ4ZmF5MmkwMG16M2V0YXBoaGx1dGN2In0.NgK6FAZDmr2IQK054aKoyA
 
   // Create constants to use in getIso()
   // const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
@@ -107,8 +96,7 @@ function Isochrone() {
   // }, [lng, lat, minutes, profile]);
 
   useEffect(() => {
-    console.log("setting geometry to map");
-    console.log(geometry);
+    // console.log("setting geometry to map");
     map.current.getSource("iso")?.setData(geometry);
   }, [geometry]);
 
@@ -117,18 +105,13 @@ function Isochrone() {
     if (!map.current) return; // wait for map to initialize
     map.current.on("load", () => {
       // When the map loads, add the source and layer
-      // console.log("on load, about to add layers");
       // Always remove the layer first to avoid an error
       if (map.current.getLayer("isolayer")) {
-        console.log("removing layer isoLayer");
         map.current.removeLayer("isolayer");
       }
       if (map.current.getSource("iso")) {
-        console.log("removing source iso");
         map.current.removeSource("iso");
       }
-
-      // console.log("adding source iso");
       map.current.addSource("iso", {
         type: "geojson",
         data: {
@@ -137,7 +120,6 @@ function Isochrone() {
         },
       });
 
-      console.log("adding layer isolayer");
       map.current.addLayer(
         {
           id: "isolayer",
@@ -160,15 +142,12 @@ function Isochrone() {
   useEffect(() => {
     if (buttonPressed === 0) return;
     if (!inputValue.trim()) return;
-    // console.log("i am a happy little button that was pressed.  minutes is:");
-    // console.log(`call backend with ${center} and ${inputValue}`);
     const params = { center, inputValue };
     // API backend call goes here
     axios
       .post(`${API_URL}/api/v1/destinations/commute-all`, params)
       .then((res) => setGeometry(res.data))
       .catch((err) => console.error(err));
-    // console.log("line 168");
     // can't put inputValue in here without the validation for empty field or spaces!
   }, [buttonPressed, inputValue]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
 
@@ -180,7 +159,7 @@ function Isochrone() {
     }
   };
 
-  // side +- buttons
+  // todo side +- buttons
   // useEffect(() => {
   //   const Geocoder = new MapboxGeocoder({
   //     accessToken: mapboxgl.accessToken,
@@ -203,14 +182,14 @@ function Isochrone() {
         />
       ) : null} */}
       {/* <SearchBox
-        accessToken={`pk.eyJ1IjoieHMyMyIsImEiOiJjbGZ4ZmF5MmkwMG16M2V0YXBoaGx1dGN2In0.NgK6FAZDmr2IQK054aKoyA`}
+        accessToken={``}
       /> */}
       <div className="absolute fl my24 mx24 py24 px24 bg-gray-faint round">
         <form id="params">
-          {/* <h4 className="txt-m txt-bold mb6">A travel mode:</h4>
-
-          <div className="mb12 mr12 toggle-group align-center"> */}
-          {/* <label className="toggle-container">
+          {/* all works, but removing for now for UX
+          <h4 className="txt-m txt-bold mb6">A travel mode:</h4>
+          <div className="mb12 mr12 toggle-group align-center">
+           <label className="toggle-container">
               <input
                 name="profile"
                 type="radio"
@@ -221,8 +200,7 @@ function Isochrone() {
               <div className="toggle toggle--active-null toggle--null">
                 Walking
               </div>
-            </label> */}
-          {/* 
+            </label> 
             <label className="toggle-container">
               <input
                 checked={profile === "cycling"}
@@ -251,8 +229,8 @@ function Isochrone() {
           </div>*/}
 
           <h4 className="txt-m txt-bold mb6">Choose a maximum commute:</h4>
-          {/* <div className="mb12 mr12 toggle-group align-center"> */}
-          {/* <label className="toggle-container">
+          {/* <div className="mb12 mr12 toggle-group align-center"> 
+           <label className="toggle-container">
               <input
                 checked={minutes === "10"}
                 name="duration"
@@ -293,9 +271,9 @@ function Isochrone() {
               <div className="toggle toggle--active-null toggle--null">
                 30 min
               </div>
-            </label> */}
-          {/* </div> */}
-          {/* <h4 className="txt-m txt-bold mb6">Customize:</h4> */}
+            </label> 
+          </div> 
+          <h4 className="txt-m txt-bold mb6">Customize:</h4> */}
           <div className="style-input">
             <input
               className="input border-r--0 round-l round"
@@ -303,8 +281,8 @@ function Isochrone() {
               name="duration"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onClick={() => setInputValue("")}
               // onChange={handleChange} // works, but sends a request on every key stroke, DONT use it
+              onClick={() => setInputValue("")}
             />
             <button className="btn px24 round-r" onClick={handleGo}>
               Go
