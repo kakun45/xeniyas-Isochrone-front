@@ -60,6 +60,7 @@ PORT = 8080
 ACCESS_TOKEN = <your public key>
 DB_USER = <database username>
 DB_PASSWORD = <database password>
+DB_NAME = <database>
 ```
 
 - `json` Files required to run on a backend from a data folder in a root of a backend:
