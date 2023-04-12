@@ -1,22 +1,31 @@
 # Commute Crafter by Xeniya Shoiko
 
-Mapping the Best NYC Living Spaces Within Your Commute Time.
+Mapping the Best NYC Living Spaces Within Your Commute Time. [My linkedin](https://www.linkedin.com/in/xeniya-shoiko)
 
-[My linkedin](https://www.linkedin.com/in/xeniya-shoiko)
-
-(screenshot?)
-
+https://user-images.githubusercontent.com/53381916/231323083-53847dfd-702c-40b2-9530-1c905b1c58a3.mov
 ## Product Description
 
-Commute Crafter is a nifty tool that visualizes all destinations reachable within a specific time frame in New York City, whether it's by foot or subway. It's perfect for selecting an apartment or job based on its location while still keeping your commuting time in mind.
+Commute Crafter is a nifty tool that visualizes all destinations reachable within a specific time frame in New York City, whether it's by foot or subway. It's perfect for selecting an apartment or job based on its location while still keeping your commuting time in mind. 
+
+<img width="1280" alt="Screen Shot 2023-04-11 at 4 00 29 PM" src="https://user-images.githubusercontent.com/53381916/231276125-ae09f6cb-90e2-49bf-9579-ca5d190056f0.png">
+
+<img width="710" alt="Screen Shot 2023-04-11 at 4 01 43 PM" src="https://user-images.githubusercontent.com/53381916/231276319-a66e442a-3a34-4201-97b2-1fd5bd2772a4.png">
+
+<img width="1280" alt="Screen Shot 2023-04-11 at 4 02 16 PM" src="https://user-images.githubusercontent.com/53381916/231276411-4f9e8c8a-25c2-4c2b-aace-6c807cfef05c.png">
+Whether you are a seasoned commuter or a first-time user, this application can help you save time and make more informed decisions about your daily commute or travel plans.
 
 ## Features and Usage Instructions
 
-TODO fill out (e.g. you enter your address, and # of minutes to commute and press go and it shows all the areas you can reach in that time)
+This application is designed to provide users with comprehensive usage instructions. For instance, by inputting your address and desired commute time, you can click the "Go" button and the application will display all the areas in NYC you can reach within that specified time frame.
 
-## How to install the project locally in a development environment
+# How to install my project in a development environment
 
-- how to get to use in VS Code: open VS Code and navigate to a directory by
+- To install my app you have to clone this frontend repo
+- To install the server-side clone a [backend repo](https://github.com/kakun45/xeniyas-Isochrone-back)
+
+## Developer installation instructions
+
+- how to get to use in VS Code: open VS Code and navigate to a directory by drag-and-drop or:
 
 ```
 File -> Open Folder
@@ -26,12 +35,6 @@ File -> Open Folder
 
 ```
 npm i mysql2
-```
-
-- how to run server
-
-```
-npm run dev # or npx nodemon index
 ```
 
 - Front End `.env.sample`:
@@ -49,7 +52,13 @@ ACCESS_TOKEN = <your public key>
 DB_USER = <database username>
 DB_PASSWORD = <database password>
 ```
+- `json` Files required to run on a backend from a data folder in a root of a backend:
+```
+./data/sceleton_res.json # for layering Geometries in the future API calls
+./data/nodes_nodup.json # to populate Nodes db table
+./data/edges_nodup_rounded.json # to populate Edges db table
 
+```
 The "migrate" script in a package.json file is a command that uses the Knex.js library to run database migrations. Migrations are a way to manage changes to your database schema over time, allowing you to version your database schema and apply changes in a controlled and repeatable way. All scripts are defined in my `package.json` file, you can easily run common commands and tasks for your Node.js application using the npm run command:
 
 ```
@@ -65,72 +74,59 @@ Seed files are used to populate your database with initial data, such as default
 npm run seed # knex seed:run
 ```
 
-## Developer installation instructions
+1. I got the Data from Open source [link](https://new.mta.info/developers) and cleaned it up with Python, please email and ask for a cleaned-up file
 
-<back>
-1. Get Data from Open source [link](https://new.mta.info/developers)
-1. Get a MapBox API public key at [mapbox](https://account.mapbox.com/)
+2. Get a MapBox API public key at [Mapbox](https://account.mapbox.com/)
 
-1. Set up an `.env` inside the project root file with an `ACCESS_TOKEN` environment variable for both Front and Backend `.env` files
+3. Set up an `.env` inside the project root file with an `ACCESS_TOKEN` environment variable for both Front and Backend `.env` files
 
-1. Navigate to the directory where my React app is located. Install the dependencies listed in my existing `package.json` file for a React app, you can use the `npm install` command.
+4. Navigate to the directory where my app is located. Install the dependencies listed in my existing `package.json` files for the app, you can use the `npm install` command for both front- and backend.
 
-1. Create and select a database in mysql2
+5. Create and select a database in mysql2
 
 ```
 CREATE DATABASE <name_of_db>;
 USE <name_of_db>;
 ```
 
-5. Save your database user and password into the `.env` of a server-side wich will be used in a database configuration file `knexfile.js`
+6. Save your database `username` and `password` into the `.env` of a server-side wich will be imported in a database configuration file `knexfile.js`
 
-## To install React you have to clone this [frontend repo](https://github.com/kakun45/xeniyas-Isochrone-front)
+- how to run the backend server
 
 ```
-npm start  # to start react
+npm run dev # or 
+npx nodemon index # to start the Express server and watch it with nodemon
+```
+- how to run the frontend React
+```
+npm start  # to start React
 ```
 
-To run in a browser:
+7. In a browser go to:
 
 ```
 http://localhost:3000/map
 ```
 
-Unexpected result? Hard reload:
+- Unexpected result in a browser? Try hard reload:
 
 ```
 cmd + shift + R
 ```
 
-The address field takes in a user's input as a typed-in text and produces suggestions,
-the calculations will wait for a second piece of input to begin: `max commute time` and a press of a `Go` button
-
-## To install the server-side clone a [backend repo](https://github.com/kakun45/xeniyas-Isochrone-back)
-
-```
-npm run dev # starts the Express server and watches with nodemon
-```
-
-<front>
 
 ## Tech Stack
 
-(it must have HTML and CSS implemented using React -> is uses HTML/CSS and React)
-
-(My application uses dynamic data -> it uses both a database for Subway data and the MapBox API)
-
-(We expect you to incorporate a server into your application -> it uses an express server I wrote and the MapBox API)
+My application leverages dynamic data through the integration of a Subway database and the MapBox API, which are both utilized within an express server that I developed. This architecture provides users with real-time access to Subway data and location-based services through a reliable and scalable backend infrastructure.
 
 - React.js (SCSS)
 - Mapbox API
 - Express/Node with Axios and Knex libraries
 - MySQL
 - data processing and clean up: Python, Pandas, Google Colaboratory: [link](https://colab.research.google.com/drive/1B1fAf8jqy54z5zkoOT7kwNqiI2hcJ7eo?usp=share_link)
-- Public data [link](https://new.mta.info/developers)
+- - Public data [link](https://new.mta.info/developers)
 
 ## Express API Reference
-
-(remove if you don't fill this)
 
 (APIs for instructors to look at go here)
 endpoints for frontend calls:
@@ -140,8 +136,14 @@ http://localhost:8080/api/v1/destinations/commute-all
 ```
 
 This takes a coordinate and returns `setGeometry` Promise<...>
-in a form: `
-{features: Array(1), type: 'FeatureCollection'}features: [{…}]type: "FeatureCollection"[[Prototype]]: Object`- lat is the latitude of ...
+in a form: 
+```
+{
+  features: [ { properties: [Object], geometry: [Object], type: 'Feature' } ],
+  type: 'FeatureCollection'
+}
+```
+To extract latitude and longitude of provided by user address
 
 ## Lessons learned
 
