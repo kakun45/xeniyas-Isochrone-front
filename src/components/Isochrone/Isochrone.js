@@ -149,7 +149,7 @@ function Isochrone() {
       .then((res) => setGeometry(res.data))
       .catch((err) => console.error(err));
     // can't put inputValue in here without the validation for empty field or spaces!
-  }, [buttonPressed, inputValue]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
+  }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
 
   const handleGo = (e) => {
     e.preventDefault();
