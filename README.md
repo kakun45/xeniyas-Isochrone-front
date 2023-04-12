@@ -14,7 +14,7 @@ Commute Crafter is a nifty tool that visualizes all destinations reachable withi
 
 TODO fill out (e.g. you enter your address, and # of minutes to commute and press go and it shows all the areas you can reach in that time)
 
-## How to install my project in a development environment
+## How to install the project locally in a development environment
 
 - how to get to use in VS Code: open VS Code and navigate to a directory by
 
@@ -145,8 +145,7 @@ in a form: `
 
 ## Lessons learned
 
-- To use React properly, it's important to separate event handlers from the code that reacts to state changes;
-
+- Proper usage of React involves separating event handlers from the logic that handles state changes. This helps to keep the codebase organized, maintainable, and easy to debug. By separating these concerns, we as developers can focus on writing code that is both efficient and easy to maintain over time;
 - The project turned out to be more difficult than expected, wait for my  postmortem on the project;
 - Calculating the distance between two points is complicated. The Earth is not flat, using Cos, Sin, Pi, and Degrees can be intimidating, and checking my math with extra pair of human eyes and calculators all over the internet was a necessity;
 - Dijkstra - the version of the shortest path algorithm is not efficient but still worked really well. Using a less efficient version of the shortest path algorithm may still produce satisfactory results for small inputs or with large computational resources. However, even small differences in efficiency can have a significant impact on the overall performance of the system, especially for large inputs or limited resources. Therefore, it's generally better to use the most efficient algorithm available to ensure better performance of the system. (baseline for Dijkstra: O(|E| log |V|));
