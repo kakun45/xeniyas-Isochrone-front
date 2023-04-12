@@ -1,3 +1,4 @@
+@use "./styles/partials/variables" as *;
 @import "mapbox-gl/dist/mapbox-gl.css";
 
 * {
@@ -10,15 +11,16 @@
 }
 
 .sidebar {
-  background-color: rgba(35, 55, 75, 0.9);
+  // background-color: rgba(35, 55, 75, 0.9);
+  background-color: $primary-blue;
   color: #fff;
-  padding: 6px 12px;
+  padding: 3px 12px;
   font-family: monospace;
   z-index: 1;
   position: absolute;
   top: 0;
-  left: 0;
-  margin: 12px;
+  right: 0;
+  // margin: 12px;
   border-radius: 4px;
 }
 

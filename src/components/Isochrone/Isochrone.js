@@ -5,6 +5,7 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 //import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import LngLat from "../LngLat/LngLat";
 import MyMapboxSearch from "../MapboxSearch/MyMapboxSearch";
 import NavBar from "../NavBar/NavBar";
 import "./Isochrone.scss";
@@ -16,14 +17,14 @@ function Isochrone() {
   const map = useRef(null); // it's a mapRef	Object -> Ref for react-map-gl map component.
 
   // this is a viewport params:
-  const [lng] = useState(-73.985664);
-  const [lat] = useState(40.748424);
+  const [lng, setLng] = useState(-73.985664);
+  const [lat, setLat] = useState(40.748424);
   const [zoom] = useState(11);
 
   const [geometry, setGeometry] = useState(null);
 
-  const [profile] = useState("walking"); // Set the default routing profile
-  const [minutes, setMinutes] = useState("5"); // Set the default duration
+  const [profile] = useState("walking"); // Set the default routing profile for Phase2
+  const [minutes, setMinutes] = useState("5"); // Set the default duration for Phase2
   const [center, setCenter] = useState([lng, lat]);
   const [inputValue, setInputValue] = useState("");
   const [buttonPressed, setButtonPressed] = useState(0);
@@ -66,7 +67,7 @@ function Isochrone() {
     marker.setLngLat(lngLat).addTo(map.current);
   }, [lat, lng, marker, zoom]);
 
-  // When a user changes the value of profile or duration by clicking a button, change the parameter's value and make the API query again
+  // for Phase2: When a user changes the value of profile or duration by clicking a button, change the parameter's value and make the API query again
   // works
   // const handleChange = (event) => {
   //   // if (event.target.name === "profile") {
@@ -159,7 +160,7 @@ function Isochrone() {
     }
   };
 
-  // todo side +- buttons
+  //  for Phase2 todo side +- buttons
   // useEffect(() => {
   //   const Geocoder = new MapboxGeocoder({
   //     accessToken: mapboxgl.accessToken,
@@ -186,7 +187,7 @@ function Isochrone() {
       /> */}
       <div className="absolute fl my24 mx24 py24 px24 bg-gray-faint round">
         <form id="params">
-          {/* all works, but removing for now for UX
+          {/* all works, but removing for now for UX  for Phase2
           <h4 className="txt-m txt-bold mb6">A travel mode:</h4>
           <div className="mb12 mr12 toggle-group align-center">
            <label className="toggle-container">
@@ -290,6 +291,8 @@ function Isochrone() {
           </div>
         </form>
       </div>
+      <LngLat center={center} setLng={setLng} setLat={setLat} />
+      {/* // <!-- Create a container for the map --> */}
       <div ref={mapContainer} className="map-container" />
     </div>
   );
