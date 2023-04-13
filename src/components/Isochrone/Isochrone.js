@@ -10,7 +10,9 @@ import MyMapboxSearch from "../MapboxSearch/MyMapboxSearch";
 import NavBar from "../NavBar/NavBar";
 import "./Isochrone.scss";
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_PUBLIC_TOKEN;
-const API_URL = process.env.REACT_APP_SERVER_URL;
+const API_URL =
+  process.env.REACT_APP_SERVER_URL ||
+  "https://xeniyas-isochrone-back.vercel.app"; // for deployment
 
 function Isochrone() {
   const mapContainer = useRef(null);
