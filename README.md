@@ -187,14 +187,14 @@ My application leverages dynamic data through the integration of a Subway databa
 
 ## Next steps
 
+- deploying the project
+- pick an open-source license
 - account for time spent for transfer the trains
-- show accessibility and amenities (hospitals, groceries, schools)
-- color code based on types of transport used
+- search within polygons to show accessibility and amenities (hospitals, groceries, schools)
+- color code based on types of transport used, time, reach, etc.
 - support cycling busses and ferry
 - toggle express trains on and off
 - sidewalks and intersections would go in there too
 - add caching for Mapbox API responses
-- deploying the project to production
 - implementing functionality for placeholders for OAuth
-- pick an open-source license
 - to expand to calculate any region
