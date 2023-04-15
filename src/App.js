@@ -14,7 +14,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/map" element={<Isochrone />} />;
+        <Route path="/" element={<Isochrone />} />;
       </Routes>
     </BrowserRouter>
   );
