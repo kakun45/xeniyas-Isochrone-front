@@ -14,18 +14,18 @@ And now it's [deployed](https://xeniyas-isochrone-front.vercel.app/)
 
 Commute Crafter is a nifty tool that visualizes all destinations reachable within a specific time frame in New York City, whether it's by foot or subway. It's perfect for selecting an apartment or job based on its location while still keeping your commuting time in mind.
 
-<img width="1280" alt="Screen Shot 2023-04-11 at 4 00 29 PM" src="https://user-images.githubusercontent.com/53381916/231276125-ae09f6cb-90e2-49bf-9579-ca5d190056f0.png">
-
-<img width="710" alt="Screen Shot 2023-04-11 at 4 01 43 PM" src="https://user-images.githubusercontent.com/53381916/231276319-a66e442a-3a34-4201-97b2-1fd5bd2772a4.png">
-
-<img width="1280" alt="Screen Shot 2023-04-11 at 4 02 16 PM" src="https://user-images.githubusercontent.com/53381916/231276411-4f9e8c8a-25c2-4c2b-aace-6c807cfef05c.png">
-Whether you are a seasoned commuter or a first-time user, this application can help you save time and make more informed decisions about your daily commute or travel plans.
+<img width="1280" alt="map over Manhattan, NY" src="https://user-images.githubusercontent.com/53381916/231276125-ae09f6cb-90e2-49bf-9579-ca5d190056f0.png">
 
 ## Features and Usage Instructions
 
-This application is designed to provide users with comprehensive usage instructions. For instance, by inputting your `address` and desired `commute time` up to an hour, you can click the `"Go"` button and the application will display all the areas in NYC you can reach within that specified time frame.
+This application is designed to provide users with comprehensive usage instructions. For instance, by inputting your NYC `address` and desired `commute time` min 6 min and up to an hour, you can click the `"Go"` button and the application will display all the areas in NYC you can reach within that specified time frame.
 
 (!) The project has time constraints with minimum and maximum limitations. The API does not support requests for commute times exceeding 60 minutes, and I assumed a minimum walking time of 6 minutes for the start.
+
+<img width="710" alt="drop down with addresses" src="https://user-images.githubusercontent.com/53381916/231276319-a66e442a-3a34-4201-97b2-1fd5bd2772a4.png">
+
+<img width="1280" alt="isochrones displayed" src="https://user-images.githubusercontent.com/53381916/231276411-4f9e8c8a-25c2-4c2b-aace-6c807cfef05c.png">
+Whether you are a seasoned commuter or a first-time user, this application can help you save time and make more informed decisions about your daily commute or travel plans.
 
 # Prerequisites
 
@@ -107,7 +107,7 @@ Seed files are used to populate your database with initial data, such as default
 npm run seed # knex seed:run
 ```
 
-- I got the Data from Open source [link](https://new.mta.info/developers) and cleaned it up with Python, please email and ask for a cleane-up logic. Here is one of the final runs, showing my thinking process of how to remove duplicates
+- The seeding Data is originally from [Open source](https://new.mta.info/developers), I cleaned it up with Python, please email to chat about my cleane-up approach. [link to my duplicates reduction flow](https://colab.research.google.com/drive/1B1fAf8jqy54z5zkoOT7kwNqiI2hcJ7eo?usp=share_link) here is one of the final runs, showing how to remove duplicates
 
 2. Navigate to the directory where my app is located. Install the dependencies listed in my existing `package.json` files for the app, you can use this command for both front- and backend:
 
@@ -138,10 +138,10 @@ npx nodemon index # to start the Express server and watch it with nodemon
 npm start  # to start React
 ```
 
-5. To see the server in action open your web browser and go to:
+5. To see the server in action open your web browser and go to port 3000:
 
 ```
-http://localhost:3000/map
+http://localhost:3000
 ```
 
 - - Unexpected result in a browser? Try hard reload:
@@ -174,14 +174,16 @@ To extract latitude and longitude of provided by user address
 
 ## Tech Stack
 
-My application leverages dynamic data through the integration of a Subway database and the MapBox API, which are both utilized within an express server that I developed. This architecture provides users with real-time access to Subway data and location-based services through a reliable and scalable backend infrastructure.
+My application leverages dynamic data through the integration of a Subway data, database and the MapBox API, which both utilized within an Express server that I developed. This architecture provides users with real-time access to Subway system and location-based services through a reliable and scalable backend infrastructure.
 
-- React.js (SCSS)
+- React.js (JavaScript, JSX, HTML, SCSS)
 - Mapbox API
 - Express/Node with Axios and Knex libraries
 - MySQL
-- data processing and clean up: Python, Pandas, Google Colaboratory: [link to my cleanup flow](https://colab.research.google.com/drive/1B1fAf8jqy54z5zkoOT7kwNqiI2hcJ7eo?usp=share_link)
+- Data processing and clean up:
+- - Python, Pandas, Google Colaboratory: [link to my duplicates reduction flow](https://colab.research.google.com/drive/1B1fAf8jqy54z5zkoOT7kwNqiI2hcJ7eo?usp=share_link)
 - - Public data [link](https://new.mta.info/developers)
+- Deployment: Vercel, PlanetScale
 
 ---
 
@@ -194,7 +196,7 @@ My application leverages dynamic data through the integration of a Subway databa
 - Whether you're using `async/await` or `.then()`, it's important to write your code in a way that doesn't accidentally create multiple execution contexts on the server side. This can be achieved by properly managing your async functions, avoiding infinite loops, and avoiding blocking the event loop;
 - DO NOT subscribe for userInput state when making an API call!
 - Deploying my React frontend, the database, and server across multiple parties proved to be an enjoyable challenge. Throughout the process, I had to make several modifications modifications to the successfully running locally project, including setting up multiple environments, implementing SSL, seeding the remote database, and tweaking the path for the deployment version using `cwd` in order to maintain a consistent workflow for both development and production environments. You can find the link to the deployed project at the top.
-- suddenly my data files were not accessible to the deployment environment due to a path change, the solution was a `process.cwd()` - which returns a string that represents the current working directory. This can be useful when you need to access files or directories relative to the current working directory.
+- suddenly my data files were not accessible to the deployment environment due to a path change in production, the solution was a `process.cwd()` - which returns a string that represents the current working directory. This can be useful when you need to access files or directories relative to the current working directory.
 
 ## Next steps
 
