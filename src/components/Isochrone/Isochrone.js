@@ -293,7 +293,7 @@ function Isochrone() {
           </div>
         </form>
       </div>
-      <LngLat center={center} setLng={setLng} setLat={setLat} />
+      {/* <LngLat center={center} setLng={setLng} setLat={setLat} /> */}
       {/* // <!-- Create a container for the map --> */}
       <div ref={mapContainer} className="map-container" />
     </div>
