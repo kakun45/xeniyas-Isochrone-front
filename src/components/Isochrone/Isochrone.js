@@ -35,6 +35,7 @@ function Isochrone() {
       color: "#314ccd",
     })
   );
+  const [isLoading, setIsLoading] = useState(false); // spinner
 
   // Create a LngLat object to use in the marker initialization
   // https://docs.mapbox.com/mapbox-gl-js/api/#lnglat
@@ -142,15 +143,23 @@ function Isochrone() {
   }, []);
 
   //only on a submit from a buttom, use a .trim() to remove spaces, if not clicked or empty, don't send
+  // todo: validation: trim any words too, down to numbers, user possible input "minutes,min,Min,h", display info sign if incorrect input: <5 or >60
   useEffect(() => {
     if (buttonPressed === 0) return;
     if (!inputValue.trim()) return;
     const params = { center, inputValue };
     // API backend call goes here
+    setIsLoading(true);
     axios
       .post(`${API_URL}/api/v1/destinations/commute-all`, params)
-      .then((res) => setGeometry(res.data))
-      .catch((err) => console.error(err));
+      .then((res) => {
+        setGeometry(res.data);
+        setIsLoading(false); // Set isLoading to false after successful API call
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoading(false); // Set isLoading to false if there's an error
+      });
     // can't put inputValue in here without the validation for empty field or spaces!
   }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
 
@@ -287,10 +296,15 @@ function Isochrone() {
               // onChange={handleChange} // works, but sends a request on every key stroke, DONT use it
               onClick={() => setInputValue("")}
             />
-            <button className="btn px24 round-r" onClick={handleGo}>
-              Go
+            <button
+              className="btn px24 round-r"
+              onClick={handleGo}
+              // Disable the button when isLoading is true
+              disabled={isLoading}>
+              {isLoading ? "Loading..." : "Go"}
             </button>
           </div>
+          {/* <div>{isLoading && <div>Loading...</div>}</div> */}
         </form>
       </div>
       {/* <LngLat center={center} setLng={setLng} setLat={setLat} /> */}
