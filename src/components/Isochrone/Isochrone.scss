@@ -1,3 +1,7 @@
+$info-color: #f8d7da;
+$info-text-color: #721c24;
+$info-border-color: #f5c6cb;
+
 .absolute {
   z-index: 1;
 }
@@ -7,4 +11,29 @@
 
 .style-input {
   display: flex;
+}
+
+.instructions {
+  position: absolute;
+  bottom: 55%;
+  left: 40%;
+  transform: translateX(-50%);
+  background-color: $info-color;
+  color: $info-text-color;
+  padding: 10px;
+  border: 1px solid $info-border-color;
+  border-radius: 5px;
+  display: inline-block;
+  transition: opacity 0.3s ease-in-out;
+
+  &.offscreen {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.parent-of-inputs {
+  display: flex;
+  align-content: flex-start;
+  flex-direction: column;
 }

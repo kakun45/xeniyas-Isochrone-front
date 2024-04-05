@@ -9,7 +9,7 @@ function Navbar() {
         <svg className="icon txt-m mr6">
           <use xlinkHref="#icon-home" />
         </svg>{" "}
-        Home
+        NYC Midtown
       </a>
       <a
         className="inline-flex btn color-blue color-white-on-active bg-transparent bg-darken10-on-hover bg-blue-on-active txt-s ml3"
@@ -21,7 +21,7 @@ function Navbar() {
           to="https://www.linkedin.com/in/xeniya-shoiko/"
           target="_blank"
           rel="noopener noreferrer">
-          Author's LinkedIn
+          Report an Issue or Say Hi on LinkedIn
         </Link>
       </a>
       {/* <a

@@ -36,6 +36,11 @@ function Isochrone() {
     })
   );
   const [isLoading, setIsLoading] = useState(false); // spinner
+  const [infoVisible, setInfoVisible] = useState(false); // infobox
+  const [infoMessage, setInfoMessage] = useState(""); // infobox Msg
+  // const [validatedValue, setValidatedValue] = useState(""); // store validated Input
+  const [isInvalidChars, setIsInvalidChars] = useState(false); // infobox for chars
+  const [isInvalidRange, setIsInvalidRange] = useState(false); // infobox for range
 
   // Create a LngLat object to use in the marker initialization
   // https://docs.mapbox.com/mapbox-gl-js/api/#lnglat
@@ -146,7 +151,7 @@ function Isochrone() {
   // todo: validation: trim any words too, down to numbers, user possible input "minutes,min,Min,h", display info sign if incorrect input: <5 or >60
   useEffect(() => {
     if (buttonPressed === 0) return;
-    if (!inputValue.trim()) return;
+    if (!inputValue) return; // todo: replace for isInvalidInput?
     const params = { center, inputValue };
     // API backend call goes here
     setIsLoading(true);
@@ -163,10 +168,46 @@ function Isochrone() {
     // can't put inputValue in here without the validation for empty field or spaces!
   }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
 
+  const handleChange = (e) => {
+    e.preventDefault();
+    let value = e.target.value.trim();
+    // Check if the value is contains only valid chars (dot is invalid)
+    const infoblock = (msg) => {
+      setInfoVisible(true);
+      setInfoMessage(msg);
+      setTimeout(() => {
+        setInfoVisible(false);
+        setInfoMessage("");
+      }, 1800); // hide infobox after 1.8sec
+    };
+    const containsValidChars = (val) => {
+      // Regular expression to match any digit, no dot no space
+      const regex = /^\d+$/;
+      return regex.test(val);
+    };
+    setIsInvalidChars(!containsValidChars(value));
+    // async state may have not updated yet, useless to check it here
+    if (!containsValidChars(value)) {
+      console.log("Invalid chars detected!"); // this is triggered if num has decimals 45.45, non numers are handled in HTML attr below
+      infoblock("Whole minutes only."); // popup infobox for invalidChar
+    }
+    const intValue = parseInt(value); // removes the decimal dots in UI input
+    setInputValue(intValue.toString()); // disply it in input UI
+    // Check if the value is within the valid range
+    if (intValue >= 6 && intValue <= 60) {
+      setIsInvalidRange(false); // clear invalid state
+      return;
+    }
+    // input is invalid. This is triggered if num in range(2,6) & disables button
+    infoblock("Min 6, Max 60."); // popup infobox for invalidRange
+    setIsInvalidRange(true);
+    // console.log("Invalid minutes Range detected!");
+  };
+
   const handleGo = (e) => {
     e.preventDefault();
     // validate that it's not empty ''
-    if (inputValue) {
+    if (inputValue && !isInvalidRange) {
       setButtonPressed(Date.now()); // only when clicked and Not empty do I grab an inputValue
     }
   };
@@ -184,8 +225,10 @@ function Isochrone() {
   return (
     <div>
       <NavBar />
-      <MyMapboxSearch map={map.current} setCenter={setCenter} />
-      {/* {map.current ? (
+      <div className="absolute fl my24 mx24 py24 px24 bg-gray-faint round">
+        <div className="parent-of-inputs">
+          <MyMapboxSearch map={map.current} setCenter={setCenter} />
+          {/* {map.current ? (
         <MapboxGeocoder
           mapRef={map.current}
           onViewportChange={handleGeocoderViewportChange}
@@ -193,12 +236,12 @@ function Isochrone() {
           position="top-left"
         />
       ) : null} */}
-      {/* <SearchBox
+          {/* <SearchBox
         accessToken={``}
       /> */}
-      <div className="absolute fl my24 mx24 py24 px24 bg-gray-faint round">
-        <form id="params">
-          {/* all works, but removing for now for UX  for Phase2
+
+          <form id="params">
+            {/* all works, but removing for now for UX  for Phase2
           <h4 className="txt-m txt-bold mb6">A travel mode:</h4>
           <div className="mb12 mr12 toggle-group align-center">
            <label className="toggle-container">
@@ -240,8 +283,10 @@ function Isochrone() {
             </label> 
           </div>*/}
 
-          <h4 className="txt-m txt-bold mb6">Choose a maximum commute:</h4>
-          {/* <div className="mb12 mr12 toggle-group align-center"> 
+            <h4 className="txt-m txt-bold mb6">
+              Choose a maximum commute: Min 6, Max 60
+            </h4>
+            {/* <div className="mb12 mr12 toggle-group align-center"> 
            <label className="toggle-container">
               <input
                 checked={minutes === "10"}
@@ -286,26 +331,36 @@ function Isochrone() {
             </label> 
           </div> 
           <h4 className="txt-m txt-bold mb6">Customize:</h4> */}
-          <div className="style-input">
-            <input
-              className="input border-r--0 round-l round"
-              placeholder="Daily travel limit (min)"
-              name="duration"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              // onChange={handleChange} // works, but sends a request on every key stroke, DONT use it
-              onClick={() => setInputValue("")}
-            />
-            <button
-              className="btn px24 round-r"
-              onClick={handleGo}
-              // Disable the button when isLoading is true
-              disabled={isLoading}>
-              {isLoading ? "Loading..." : "Go"}
-            </button>
-          </div>
-          {/* <div>{isLoading && <div>Loading...</div>}</div> */}
-        </form>
+            <div className="style-input">
+              <input
+                className="input border-r--0 round-l round"
+                placeholder="Daily travel limit, min"
+                name="duration"
+                type="number" // still allows for non-numeric characters, still need to handle validation in code
+                required
+                value={inputValue}
+                onChange={handleChange} // don't send a request on every keystroke
+                onClick={() => setInputValue("")} // DON'T REMOVE! It erases a previous input
+                aria-describedby="inote"
+              />
+              <p
+                id="inote"
+                className={
+                  infoVisible ? "instructions" : "instructions offscreen"
+                }>
+                {infoMessage}
+              </p>
+              <button
+                className="btn px24 round-r"
+                onClick={handleGo}
+                // Disable the button when isLoading or invalidRange is true
+                disabled={isLoading || isInvalidRange}>
+                {isLoading ? "Loading..." : "Go"}
+              </button>
+            </div>
+            {/* <div>{isLoading && <div>Loading...</div>}</div> */}
+          </form>
+        </div>
       </div>
       {/* <LngLat center={center} setLng={setLng} setLat={setLat} /> */}
       {/* // <!-- Create a container for the map --> */}
