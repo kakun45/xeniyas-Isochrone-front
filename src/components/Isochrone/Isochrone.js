@@ -58,12 +58,14 @@ function Isochrone() {
       try {
         const response = await fetch(`${API_URL}/api/check-db`);
         const data = await response.json();
+        console.log("Response data:", data); // log
         if (response.ok) {
           setDbStatus({ message: data.message, type: "success" });
         } else {
           setDbStatus({ message: data.message, type: "error" });
         }
       } catch (error) {
+        console.error("Fetch error:", error);
         setDbStatus({
           message: "An error occurred. Please try again later.",
           type: "error",
