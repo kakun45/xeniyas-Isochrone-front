@@ -17,6 +17,10 @@ const API_URL =
 function Isochrone() {
   const mapContainer = useRef(null);
   const map = useRef(null); // it's a mapRef	Object -> Ref for react-map-gl map component.
+  // to indicate that the data fetching process is ongoing. For the rendering logic to use the type property for conditional class names
+  const [dbStatus, setDbStatus] = useState({ message: "", type: "" });
+  const [isDbCheckInProgress, setIsDbCheckInProgress] = useState(true);
+  // While isLoading is true, a loading indicator (<div...>Loading...</div>) is rendered. If an error occurs, an error message is displayed. If the data is successfully fetched: (todo: button is activated in UI & message disapear)
 
   // this is a viewport params:
   const [lng, setLng] = useState(-73.985664);
@@ -48,6 +52,28 @@ function Isochrone() {
     lon: lng,
     lat: lat,
   };
+  // check if db connection is good. Integrate the status 'type' (error or success) into the dbStatus object
+  useEffect(() => {
+    const checkDbConnection = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/check-db`);
+        const data = await response.json();
+        if (response.ok) {
+          setDbStatus({ message: data.message, type: "success" });
+        } else {
+          setDbStatus({ message: data.message, type: "error" });
+        }
+      } catch (error) {
+        setDbStatus({
+          message: "An error occurred. Please try again later.",
+          type: "error",
+        });
+      } finally {
+        setIsDbCheckInProgress(false);
+      }
+    };
+    checkDbConnection();
+  }, []);
 
   // move/fly the map when the center property changes
   useEffect(() => {
@@ -171,7 +197,7 @@ function Isochrone() {
   const handleChange = (e) => {
     e.preventDefault();
     let value = e.target.value.trim();
-    // Check if the value is contains only valid chars (dot is invalid)
+    // Check if the value contains only valid chars (dot is invalid)
     const infoblock = (msg) => {
       setInfoVisible(true);
       setInfoMessage(msg);
@@ -221,9 +247,18 @@ function Isochrone() {
   //   // // Add the control to the map.
   //   map.current?.addControl(new mapboxgl.NavigationControl());
   // }, []);
-
   return (
     <div>
+      {isDbCheckInProgress ? (
+        <h1 className="success">Loading data...</h1>
+      ) : (
+        <div>
+          {/* when db is back online add a disapeare mgs Fn */}
+          <p className={dbStatus.type === "error" ? "error" : "success"}>
+            {dbStatus.message}
+          </p>
+        </div>
+      )}
       <NavBar />
       <div className="absolute fl my24 mx24 py24 px24 bg-gray-faint round">
         <div className="parent-of-inputs">
@@ -354,7 +389,12 @@ function Isochrone() {
                 className="btn px24 round-r"
                 onClick={handleGo}
                 // Disable the button when isLoading or invalidRange is true
-                disabled={isLoading || isInvalidRange}>
+                disabled={
+                  isLoading ||
+                  isInvalidRange ||
+                  isDbCheckInProgress ||
+                  dbStatus.type === "error"
+                }>
                 {isLoading ? "Loading..." : "Go"}
               </button>
             </div>

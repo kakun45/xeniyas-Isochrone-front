@@ -1,6 +1,7 @@
 $info-color: #f8d7da;
 $info-text-color: #721c24;
 $info-border-color: #f5c6cb;
+$info-good-color: #b7f3b7;
 
 .absolute {
   z-index: 1;
@@ -36,4 +37,15 @@ $info-border-color: #f5c6cb;
   display: flex;
   align-content: flex-start;
   flex-direction: column;
+}
+
+.error {
+  padding: 10px;
+  color: $info-text-color;
+  background-color: $info-color;
+}
+
+.success {
+  padding: 10px;
+  background-color: $info-good-color;
 }
