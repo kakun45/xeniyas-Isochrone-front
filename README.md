@@ -115,9 +115,10 @@ npm run seed # knex seed:run
 npm install
 ```
 
-3. Create and select a database in mysql2
+3. Access, Create and select a database in mysql2
 
 ```
+mysql -u your_username -p # on Command line
 CREATE DATABASE <name_of_db>;
 USE <name_of_db>;
 exit
@@ -133,9 +134,11 @@ npx nodemon index # to start the Express server and watch it with nodemon
 ```
 
 - how to run the frontend React
+- how to run the backend Express
 
 ```
 npm start  # to start React
+npx nodemon index.js # to start backend server for dev
 ```
 
 5. To see the server in action open your web browser and go to port 3000:

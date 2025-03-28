@@ -1,11 +1,12 @@
+import React, { useEffect, useRef, useState } from "react";
 // import Geocoder from "react-map-gl-geocoder"; // depricated
+// import mapboxgl from "mapbox-gl"; // do not use
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 // import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder"; // the search might be depricated on it
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
 //import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import LngLat from "../LngLat/LngLat";
+// import LngLat from "../LngLat/LngLat";
 import MyMapboxSearch from "../MapboxSearch/MyMapboxSearch";
 import NavBar from "../NavBar/NavBar";
 import "./Isochrone.scss";
@@ -45,6 +46,10 @@ function Isochrone() {
   // const [validatedValue, setValidatedValue] = useState(""); // store validated Input
   const [isInvalidChars, setIsInvalidChars] = useState(false); // infobox for chars
   const [isInvalidRange, setIsInvalidRange] = useState(false); // infobox for range
+
+  // todo:
+  //  Change wording on a “go” button to “recalculate” if the location from a dropdown just changed and moved a map. Track whether a new address has been selected from the dropdown and updating the button text accordingly.
+  const [isNewLocation, setIsNewLocation] = useState(false); // Track if location changed
 
   // Create a LngLat object to use in the marker initialization
   // https://docs.mapbox.com/mapbox-gl-js/api/#lnglat
@@ -133,8 +138,7 @@ function Isochrone() {
   // }, [lng, lat, minutes, profile]);
 
   useEffect(() => {
-    // console.log("setting geometry to map");
-    map.current.getSource("iso")?.setData(geometry);
+    map.current.getSource("iso")?.setData(geometry); // setting geometry to map
   }, [geometry]);
 
   // Since layers in Mapbox GL JS are remote, they are asynchronous. So code that connects to Mapbox GL JS often uses event binding to change the map at the right time. For example:
@@ -195,6 +199,7 @@ function Isochrone() {
       });
     // can't put inputValue in here without the validation for empty field or spaces!
   }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
+  //  todo: consider putting center inside of list of changes wached by useEffect [...]
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -238,6 +243,8 @@ function Isochrone() {
     if (inputValue && !isInvalidRange) {
       setButtonPressed(Date.now()); // only when clicked and Not empty do I grab an inputValue
     }
+    //  todo: Perform isochrone calculation, then inside handleClick() in <MyMapboxSearch> setIsNewLocation(true); // Mark as new location
+    // setIsNewLocation(false); // Reset after calculation
   };
 
   //  for Phase2 todo side +- buttons
@@ -264,7 +271,9 @@ function Isochrone() {
       <NavBar />
       <div className="absolute fl my24 mx24 py24 px24 bg-gray-faint round">
         <div className="parent-of-inputs">
-          <MyMapboxSearch map={map.current} setCenter={setCenter} />
+          {map.current && (
+            <MyMapboxSearch map={map.current} setCenter={setCenter} />
+          )}
           {/* {map.current ? (
         <MapboxGeocoder
           mapRef={map.current}
@@ -387,6 +396,8 @@ function Isochrone() {
                 }>
                 {infoMessage}
               </p>
+              {/* todo: Button with dynamic text 
+              {isNewLocation ? "Recalculate" : "Go"} */}
               <button
                 className="btn px24 round-r"
                 onClick={handleGo}
