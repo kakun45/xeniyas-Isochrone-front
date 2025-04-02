@@ -11,9 +11,7 @@ import MyMapboxSearch from "../MapboxSearch/MyMapboxSearch";
 import NavBar from "../NavBar/NavBar";
 import "./Isochrone.scss";
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_PUBLIC_TOKEN;
-const API_URL =
-  process.env.REACT_APP_SERVER_URL ||
-  "https://xeniyas-isochrone-back.vercel.app"; // for deployment
+const API_URL = process.env.REACT_APP_SERVER_URL;
 
 function Isochrone() {
   const mapContainer = useRef(null);
@@ -63,7 +61,7 @@ function Isochrone() {
       try {
         const response = await fetch(`${API_URL}/api/check-db`);
         const data = await response.json();
-        // console.log("Response data:", data); // test log
+        // console.log("66) Response data:", data); // test log
         if (response.ok) {
           setDbStatus({ message: data.message, type: "success" });
         } else {
