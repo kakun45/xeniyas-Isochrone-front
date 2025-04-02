@@ -32,7 +32,7 @@ function MyMapboxSearch({ map, setCenter }) {
     }
     const selectedAddress = results[index].place_name; //get the full address text
     setCenter(results[index].center); // move the map center
-    setIsNewLocation(true); // Mark as new location
+    // setIsNewLocation(true); // Mark as new location
     setQuery(selectedAddress); // update input field with the selected address
     setIsInputCleared(false); // Restore input when a new address is selected
     setShowStyleListState(false); // hide the dropdown
