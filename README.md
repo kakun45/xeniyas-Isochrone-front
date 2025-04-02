@@ -130,7 +130,7 @@ exit
 
 ```
 npm run dev # or
-npx nodemon index # to start the Express server and watch it with nodemon
+npx nodemon index.js # to start the Express server and watch it with nodemon
 ```
 
 - how to run the frontend React
