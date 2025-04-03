@@ -47,7 +47,7 @@ mysql -u <username> -p # Open MySQL in your terminal or command prompt
 - how to get to use in VS Code: open VS Code and navigate to a directory by drag-and-drop or:
 
 ```
-File -> Open Folder
+File -> open cloned_repo_folder
 ```
 
 1. Get a MapBox API public key at [Mapbox](https://account.mapbox.com/)
@@ -69,9 +69,11 @@ ACCESS_TOKEN = <your public key>
 DB_USER = <database username>
 DB_PASSWORD = <database password>
 DB_NAME = <database>
+...
+# for a current list see the backend repo
 ```
 
-- `json` Files required to run on a backend from a data folder in a root of a backend:
+- `json` Files required to run from a `/data` directory on the backend:
 
 ```
 ./data/sceleton_res.json # for layering Geometries in the future API calls
@@ -84,11 +86,16 @@ Once you have created these folders and files, you will have the following file 
 
 ```
 ├── server
+|── index.js
 ||── controllers
 │|── data
 ││├── sceleton_res.json
-││├── nodes_nodup.json.json
+││├── nodes_nodup.json
 ││├── edges_nodup_rounded.json
+|||── ...
+||── migrations
+||── seeds
+||── routs
 ...
 ```
 
@@ -126,19 +133,19 @@ exit
 
 4. Add your database `username` and `password` into the `.env` of a server-side wich will be imported in a database configuration file `knexfile.js`
 
-- how to run the backend server
-
-```
-npm run dev # or
-npx nodemon index.js # to start the Express server and watch it with nodemon
-```
-
-- how to run the frontend React
 - how to run the backend Express
 
 ```
-npm start  # to start React
-npx nodemon index.js # to start backend server for dev
+npm run dev
+# or to start the Express server and watch it with nodemon
+npx nodemon index.js
+```
+
+- how to run the frontend React
+
+```
+# to start React
+npm start  
 ```
 
 5. To see the server in action open your web browser and go to port 3000:
@@ -153,16 +160,19 @@ http://localhost:3000
 cmd + shift + R
 ```
 
+- - "Third-Party cookie..." or `ERR_BLOCKED_BY_CLIENT`
+
+Disable ads blocker uBlockO (Mapbox API suggests)
+
 ## Express API Reference
 
-Endpoint for the frontend calls:
+POST to Endpoint from the frontend with params of `center` and `inputValue`:
 
 ```
 <host>/api/v1/destinations/commute-all
 ```
 
-This takes a coordinate and returns `setGeometry` Promise<...>
-in a form:
+This takes a coordinate and returns `setGeometry` Promise<...> in a form:
 
 ```
 {
@@ -171,7 +181,7 @@ in a form:
 }
 ```
 
-To extract latitude and longitude of provided by user address
+To extract `latitude` and `longitude` of selected address by a user
 
 ---
 
@@ -186,12 +196,13 @@ My application leverages dynamic data through the integration of a Subway data, 
 - Data processing and clean up:
 - - Python, Pandas, Google Colaboratory: [link to my duplicates reduction flow](https://colab.research.google.com/drive/1B1fAf8jqy54z5zkoOT7kwNqiI2hcJ7eo?usp=share_link)
 - - Public data [link](https://new.mta.info/developers)
-- Deployment: Vercel, PlanetScale
+- Deployment: Vercel, PlanetScale (and other free db over time)
 
 ---
 
 ## Lessons learned
 
+- Clean public data! (80M -> N Kb)
 - Proper usage of React involves separating event handlers from the logic that handles state changes. This helps to keep the codebase organized, maintainable, and easy to debug. By separating these concerns, we as developers can focus on writing code that is both efficient and easy to maintain over time;
 - The project turned out to be more difficult than expected, wait for my  postmortem on the project;
 - Calculating the distance between two points is complicated. The Earth is not flat, using Cos, Sin, Pi, and Degrees can be intimidating, and checking my math with extra pair of human eyes and calculators all over the internet was a necessity;
@@ -203,13 +214,13 @@ My application leverages dynamic data through the integration of a Subway data, 
 
 ## Next steps
 
-- pick an open-source license
 - account for time spent for transfer the trains
 - toggle express trains on and off
-- search within polygons to show accessibility and amenities (ER, hospitals, groceries, schools)
-- color code based on types of transport used, time, reach, etc.
-- support cycling, busses, ferry, LIRR, Metro North
+- search within polygons to show accessibility and amenities (POI, ER, hospitals, groceries, schools)
+- colorcode based on types of transport used, time, reach, etc.
+- support cycling, busses, ferry, LIRR, Metro North. etc.
 - sidewalks and intersections would go in there too for transfers
 - caching for Mapbox API responses
 - implementing functionality for placeholders for OAuth
-- to expand and calculate any region
+- find other public transport date to expand and calculate any region, not just NYC
+- add trains tracking live.
