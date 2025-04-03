@@ -139,7 +139,7 @@ function Isochrone() {
     map.current.getSource("iso")?.setData(geometry); // setting geometry to map
   }, [geometry]);
 
-  // Since layers in Mapbox GL JS are remote, they are asynchronous. So code that connects to Mapbox GL JS often uses event binding to change the map at the right time. For example:
+  // Since layers in Mapbox GL JS are remote, Mapbox loads layers asynchronously, must wait for the map to be fully initialized before modifying it.
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
     map.current.on("load", () => {
@@ -152,27 +152,27 @@ function Isochrone() {
         map.current.removeSource("iso");
       }
       map.current.addSource("iso", {
+        // Later, this GeoJSON source, id='iso', can be updated with actual data (isochrone)
         type: "geojson",
         data: {
           type: "FeatureCollection",
-          features: [],
+          features: [], // empty initially, to be updated later with real data
         },
       });
 
       map.current.addLayer(
         {
           id: "isolayer",
-          type: "fill",
-          // Use "iso" as the data source for this layer
-          source: "iso",
+          type: "fill", // Will display a colored polygon
+          source: "iso", // Uses previously created iso data source for this layer
           layout: {},
           paint: {
-            // The fill color for the layer is set to a light purple
+            // The fill color for the layer is set to a light purple in 30%
             "fill-color": "#5a3fc0",
             "fill-opacity": 0.3,
           },
         },
-        "poi-label"
+        "poi-label" // makes sure the "isolayer" appears below labels on the map
       );
     });
   }, []);
@@ -181,9 +181,9 @@ function Isochrone() {
   // todo: validation: trim any words too, down to numbers, user possible input "minutes,min,Min,h", display info sign if incorrect input: <5 or >60
   useEffect(() => {
     if (buttonPressed === 0) return;
-    if (!inputValue) return; // todo: replace for isInvalidInput?
+    if (!inputValue) return;
     const params = { center, inputValue };
-    // API backend call goes here
+    // API backend call, if buttonPressed
     setIsLoading(true);
     axios
       .post(`${API_URL}/api/v1/destinations/commute-all`, params)
@@ -197,7 +197,7 @@ function Isochrone() {
       });
     // can't put inputValue in here without the validation for empty field or spaces!
   }, [buttonPressed]); // DO NOT subscribe to inputValue here! GET only when submitted, not onChange due to 'expensive' .GETs
-  //  todo: consider putting center inside of list of changes wached by useEffect [...]
+  //  todo: consider putting center inside of list of changes wached by useEffect [...] OR allow that .move(), detect, then change word on a button to "regenerate"
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -209,7 +209,7 @@ function Isochrone() {
       setTimeout(() => {
         setInfoVisible(false);
         setInfoMessage("");
-      }, 1800); // hide infobox after 1.8sec
+      }, 1000); // hide infobox after 1sec
     };
     const containsValidChars = (val) => {
       // Regular expression to match any digit, no dot no space
@@ -327,9 +327,7 @@ function Isochrone() {
             </label> 
           </div>*/}
 
-            <h4 className="txt-m txt-bold mb6">
-              Choose a maximum commute: Min 6, Max 60
-            </h4>
+            <h4 className="txt-m txt-bold mb6">Commute: Min 6 - Max 60</h4>
             {/* <div className="mb12 mr12 toggle-group align-center"> 
            <label className="toggle-container">
               <input

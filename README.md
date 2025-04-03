@@ -18,9 +18,15 @@ Commute Crafter is a nifty tool that visualizes all destinations reachable withi
 
 ## Features and Usage Instructions
 
-This application is designed to provide users with comprehensive usage instructions. For instance, by inputting your NYC `address` and desired `commute time` min 6 min and up to an hour, you can click the `"Go"` button and the application will display all the areas in NYC you can reach within that specified time frame.
+This application is designed to provide users with geo visualization instructions. For instance, by inputting your NYC `address` and desired `commute time` min 6 min and up to an hour, and a click the `"Go"` button the application will display all the areas in NYC you can reach within that specified time frame.
 
-(!) The project has time constraints with minimum and maximum limitations. The API does not support requests for commute times exceeding 60 minutes, and I assumed a minimum walking time of 6 minutes for the start.
+## What is an Isochrone ("iso") Layer?
+
+An **isochrone map** shows areas that can be reached from a point within a certain time (e.g., walking 6 minutes, train 30 minutes).
+
+Mapbox GL provides an Isochrone API to generate these areas dynamically.
+
+**Important Note:** The API does not support commute times exceeding 60 minutes. I set a minimum walking time of 6 minutes from the starting point, as subway entrances are rarely farther than that.
 
 <img width="710" alt="drop down with addresses" src="https://user-images.githubusercontent.com/53381916/231276319-a66e442a-3a34-4201-97b2-1fd5bd2772a4.png">
 
@@ -217,10 +223,10 @@ My application leverages dynamic data through the integration of a Subway data, 
 - account for time spent for transfer the trains
 - toggle express trains on and off
 - search within polygons to show accessibility and amenities (POI, ER, hospitals, groceries, schools)
-- colorcode based on types of transport used, time, reach, etc.
+- colorcode based on types of: transport used, time, reach, etc.
 - support cycling, busses, ferry, LIRR, Metro North. etc.
 - sidewalks and intersections would go in there too for transfers
-- caching for Mapbox API responses
+- caching for Mapbox API responses for a slider
 - implementing functionality for placeholders for OAuth
 - find other public transport date to expand and calculate any region, not just NYC
 - add trains tracking live.
