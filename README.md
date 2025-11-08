@@ -206,6 +206,132 @@ My application leverages dynamic data through the integration of a Subway data, 
 
 ---
 
+Medium tech-blog post for this repo methodology. 
+
+# Methodology: 
+This React SPA web app project implements an isochrone mapping application with a JavaScript backend and a JavaScript/SCSS/HTML frontend.
+
+- Purpose: generate and display isochrones (areas reachable within a given time/distance) for user-specified origin and MTA transport mode. NYC only.
+- Architecture: single-page frontend (React.JS + SCSS + HTML) that calls a JS backend API. Backend performs routing/isochrone computation or proxies requests to a routing engine/service and calls MapboxAPI and returns standard geo-data (GeoJSON).
+- Data flow: user inputs origin address, time → frontend sends request to backend → backend computes or requests isochrone polygons from Mapbox → backend performs graph seearch with Dijkstra algo,  transforms and returns GeoJSON → frontend renders polygons on an interactive map and updates UI.
+- Key components: input validation and UI state (frontend), API endpoints and isochrone generation logic (backend), map rendering and styling (GeoJSON, vector tiles, or map library integration), database MTA routs and schedule stored.
+- Nonfunctional concerns (TODOs): caching repeated queries, rate-limiting external routing services, performance tuning for polygon generation and rendering, and responsive UI styling with SCSS, instructions on landing page to improve comprehensiveness, UX with `Enter` key stroke.
+- Development process (7 day sprint): iterative feature-driven sprint, unit/integration tests for backend endpoints, manual and automated UI checks, and CI/CD on Vercel and cloud database to deploy backend and dynamic frontend builds.
+
+## Implementation details (endpoints, data formats, deployment)
+### Data formats and conventions
+- All spatial payloads use GeoJSON (Feature or FeatureCollection).
+- Coordinate order: [lng, lat] (GeoJSON standard).
+- Properties on features: range (numeric), units (string), mode (string), generatedAt (ISO timestamp).
+- .env.sample 
+  
+### Backend implementation details
+- Tech: react SPA, Node.js, Express, JavaScript.
+- Routing/isochrone engine:
+  - proxy to external APIs (routing, Mapbox Isochrone, with API keys).
+- Polygon generation & processing:
+  - Used routing outputs (isochrone contours, travel-time graph with Dijkstra) converted to GeoJSON polygons.
+  - for simplification: union/difference to produce one unified isocron not layered "birthdday cake" of small isocrones on top of each other) and area filtering to NYC only provided by database.
+- Rate-limiting & throttling:
+  -  enforced by 3rd party API: express-rate-limit or built-in provider limits; per-IP and per-API-key quotas.
+ - user unput validation from UI front itself
+- Testing:
+  - Unit tests with Playwright for endpoint logic, scheduled database health checks (Prefect),  
+- Observability:
+  - Structured logs, request tracing, metrics (Prometheus), error tracking (Sentry).
+- Caching (todo ideas):
+  - implement: GET /api/cache/status (admin) and POST /api/cache/clear (admin).
+  - response caching keyed by origin+mode+ranges+parameters; store GeoJSON and TTL. 
+  - Purpose: inspect/clear server cache (protected with auth).
+- endpoints "back-end"
+  - `getIso` (station)
+    - Calls MapboxAPI with `station.lon`, `station.lat` and `station.walk_minutes`
+    - Returns a GeoJSON geometry (Polygon)
+    - Requires process.env.ACCESS_TOKEN
+    - getAllGeometry(stations)
+  - Calls `getIso` for each mta-station in parallel (Promise.all)
+Returns a GeoJSON FeatureCollection whose `geometry` is a GeometryCollection of polygons.
+  - For testing (note for my future-self):
+    - GET /api/v1/destinations/
+  Simple health check - returns "OK" (text).
+    - GET /api/v1/destinations/2
+  Returns sample isochrone JSON from data/lexington_geometries.json (JSON).
+    - GET /api/v1/destinations/collection
+  Returns sample GeometryCollection JSON from data/geometry_collection.json (JSON).
+    - GET /api/v1/destinations/test-one
+  Calls Mapbox isochrone for one hardcoded station and returns a single geometry (GeoJSON geometry object / Polygon).
+    - GET /api/v1/destinations/test-all
+  Calls Mapbox isochrone for several hardcoded stations, assembles a FeatureCollection with a GeometryCollection of polygons, and returns it (GeoJSON FeatureCollection).
+    - POST /api/v1/destinations/commute-one
+  Input: { center: [lng, lat], inputValue: minutes }
+  Calls Mapbox isochrone for that single origin and returns the geometry (GeoJSON geometry object / Polygon).
+    - POST /api/v1/destinations/commute-all
+  Input: { center: [lng, lat], inputValue: minutes }
+  Finds nearby stations (originToArrOfStations), requests isochrones for each, merges polygons with Turf.js (union), and returns the combined polygon (GeoJSON Feature or FeatureCollection if <2 features).
+    - GET /api/v1/destinations/points
+  Uses a hardcoded center (Empire) and walkMinutes to fetch station rows (originToArrOfStations) and returns the station data (JSON array).
+
+
+### Frontend implementation details
+- Tech: single-page app in react, JS, SCSS, HTML; integrate map library (Mapbox GL JS).
+- Map rendering:
+  - Accept GeoJSON, add as vector layers with color ramp (e.g., areas time tightened by MTA + walking speed of average human  with decreasing opacity).
+  - Renders popup info for user guidenece,
+- isocrone produced on a single button design click showing range within provided travel time. (min 6 min - max 60 min)
+- UI:
+  - Controls for origin (type in the address, 3 best matches offered, select, geolocate point of origin moved with fly-in animation, mode selection, numeric input), Go one-button interface.
+  - Client-side validation.
+- Data flow:
+  - POST to /api/isochrone, parse FeatureCollection, draw layers.
+  - (todo) Implement cache-aware UI: show cached indicator if backend returns cache metadata.
+  - (idea) debounce of requests (e.g., 300ms).
+- endpoints "front-end":
+  - GET `{API_URL}/api/check-db`
+    - What it does: health/readiness check for the backend / database used by the app.
+    - Where used: called on component mount (useEffect) to set dbStatus and isDbCheckInProgress.
+    - Behavior: expects JSON (e.g., { message: "..."}). If response.ok → UI shows success; otherwise UI shows error and disables the “Go” button.
+  - POST `{API_URL}/api/v1/destinations/commute-all`
+    - What it does: core request to generate commute/isochrone data for the map.
+    - Where used: fired when the user clicks “Go” (handleGo triggers buttonPressed effect).
+    - Request body (JSON): { center: [lng, lat], inputValue: "<minutes>" } — inputValue is an integer-string (validated client-side: min 6, max 60).
+    - Expected response: GeoJSON-like geometry (FeatureCollection of polygons). The code does setGeometry(res.data) and updates the Mapbox source "iso" with that data.
+    - Behavior: toggles isLoading while fetching; errors are logged and stop the loading spinner.
+
+### Security and operational
+- CORS: restrict allowed origins for production.
+- Authentication: API keys or token-based auth for protected endpoints.
+- Secrets: routing API keys, DB credentials in environment variables.
+- TLS: serve backend over HTTPS.
+- Rate-limit and abuse protection.
+
+### Deployment steps
+- Prereqs: Node.js, React.
+- Local dev:
+  - Clone repos (front and back).
+  - Backend: `cd backend && npm install && npm run dev # (or npm start after build).`
+  - Frontend: `cd frontend && npm install && npm start`
+- Docker (idea):
+  - Backend Dockerfile: FROM node:18, copy package.json, install, build, expose PORT, CMD ["node","dist/index.js"].
+  - Frontend: build static assets and serve via nginx or serve from backend via express static middleware.
+  - docker-compose.yml: services: backend, redis, (optional) routing-engine service.
+  - Example: `docker-compose up -d --build`
+- Deploying to cloud:
+    - V0: Deploy backend container to Vercel + PlanetScale for Vercel.
+    - V2: Vercel + tech.db,
+    - V3: Vercel + avian. (I'm sure I'm not going to stop there.)
+    - environment variables: DB_PORT, DB_URL, DB_Host, db_user, access_token to mapbox_api
+  - Frontend static: deploy to Vercel. (idea: bundle into backend and serve from same domain to avoid CORS.)
+  - CI/CD (GitHub Actions):
+    -  environments: `dev`, `prod`.
+
+Example curl (quick)
+- Request:
+  `curl -X POST https://api.example.com/api/isochrone -H "Content-Type: application/json" -d '{"origin":{"lat":35.6895,"lng":139.6917},"mode":"driving","ranges":[300,600],"units":"seconds"}'`
+- Response: `GeoJSON FeatureCollection` as shown above.
+
+
+---
+
 ## Lessons learned
 
 - Clean public data! (80M -> N Kb)
