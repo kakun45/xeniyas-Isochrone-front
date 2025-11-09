@@ -206,7 +206,7 @@ My application leverages dynamic data through the integration of a Subway data, 
 
 ---
 
-Medium tech-blog post for this repo methodology. 
+[Medium tech-blog post for this repo methodology.](https://medium.com/@xeniya-shoiko/building-an-isochrone-app-in-nyc-because-how-far-can-i-get-in-30-minutes-deserves-a-map-f8a72ce6b848)
 
 # Methodology: 
 This React SPA web app project implements an isochrone mapping application with a JavaScript backend and a JavaScript/SCSS/HTML frontend.
