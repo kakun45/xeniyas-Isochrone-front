@@ -223,7 +223,7 @@ This React SPA web app project implements an isochrone mapping application with 
 - All spatial payloads use GeoJSON (Feature or FeatureCollection).
 - Coordinate order: [lng, lat] (GeoJSON standard).
 - Properties on features: range (numeric), units (string), mode (string), generatedAt (ISO timestamp).
-- .env.sample 
+- `.env.sample` 
   
 ### Backend implementation details
 - Tech: react SPA, Node.js, Express, JavaScript.
@@ -234,10 +234,9 @@ This React SPA web app project implements an isochrone mapping application with 
   - for simplification: union/difference to produce one unified isocron not layered "birthdday cake" of small isocrones on top of each other) and area filtering to NYC only provided by database.
 - Rate-limiting & throttling:
   -  enforced by 3rd party API: express-rate-limit or built-in provider limits; per-IP and per-API-key quotas.
- - user unput validation from UI front itself
 - Testing:
   - Unit tests with Playwright for endpoint logic, scheduled database health checks (Prefect),  
-- Observability:
+- Observability (ideas):
   - Structured logs, request tracing, metrics (Prometheus), error tracking (Sentry).
 - Caching (todo ideas):
   - implement: GET /api/cache/status (admin) and POST /api/cache/clear (admin).
@@ -251,7 +250,8 @@ This React SPA web app project implements an isochrone mapping application with 
     - getAllGeometry(stations)
   - Calls `getIso` for each mta-station in parallel (Promise.all)
 Returns a GeoJSON FeatureCollection whose `geometry` is a GeometryCollection of polygons.
-  - For testing (note for my future-self):
+- Origin stations assembly: applied a distance formula to identify stations within an N-minute walking distance. 
+- For testing (note for my future-self):
     - GET /api/v1/destinations/
   Simple health check - returns "OK" (text).
     - GET /api/v1/destinations/2
