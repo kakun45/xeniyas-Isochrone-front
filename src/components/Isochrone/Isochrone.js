@@ -22,14 +22,14 @@ function Isochrone() {
   // While isLoading is true, a loading indicator (<div...>Loading...</div>) is rendered. If an error occurs, an error message is displayed. If the data is successfully fetched: (todo: button is activated in UI & message disapear)
 
   // this is a viewport params:
-  const [lng, setLng] = useState(-73.985664);
-  const [lat, setLat] = useState(40.748424);
+  const [lng] = useState(-73.985664);
+  const [lat] = useState(40.748424);
   const [zoom] = useState(11);
 
   const [geometry, setGeometry] = useState(null);
 
-  const [profile] = useState("walking"); // Set the default routing profile for Phase2
-  const [minutes, setMinutes] = useState("5"); // Set the default duration for Phase2
+  // const [profile] = useState("walking"); // Set the default routing profile for Phase2
+  // const [minutes, setMinutes] = useState("5"); // Set the default duration for Phase2
   const [center, setCenter] = useState([lng, lat]);
   const [inputValue, setInputValue] = useState("");
   const [buttonPressed, setButtonPressed] = useState(0);
@@ -47,7 +47,7 @@ function Isochrone() {
 
   // todo:
   //  Change wording on a “go” button to “recalculate” if the location from a dropdown just changed and moved a map. Track whether a new address has been selected from the dropdown and updating the button text accordingly.
-  const [isNewLocation, setIsNewLocation] = useState(false); // Track if location changed
+  // const [isNewLocation, setIsNewLocation] = useState(false); // Track if location changed
 
   // Create a LngLat object to use in the marker initialization
   // https://docs.mapbox.com/mapbox-gl-js/api/#lnglat
